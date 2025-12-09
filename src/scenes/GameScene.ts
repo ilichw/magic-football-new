@@ -33,6 +33,13 @@ export class GameScene extends Phaser.Scene {
     // players
     this.physics.add.sprite(200, 300, 'player');
     this.physics.add.sprite(600, 300, 'bot');
+
+    // pause logic
+    this.input.keyboard!.once('keydown-P', (event: KeyboardEvent) => {
+      event.preventDefault();
+      this.scene.pause();
+      this.scene.launch('PauseScene');
+    });
   }
 
   update() {

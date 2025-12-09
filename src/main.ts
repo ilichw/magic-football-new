@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GameScene } from './scenes/GameScene.ts';
+import { PauseScene } from './scenes/PauseScene.ts';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -8,7 +9,7 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
   },
-  scene: [GameScene],
+  scene: [GameScene, PauseScene],
 };
 
 const game = new Phaser.Game(config);
