@@ -1,6 +1,8 @@
 // import Phaser from 'phaser';
 
 export class GameScene extends Phaser.Scene {
+  private ball!: Phaser.Physics.Arcade.Sprite;
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -15,6 +17,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.physics.world.setBounds(80, 60, 800 - 80 * 2, 600 - 60 * 2);
+
     // game field
     this.physics.add.sprite(400, 300, 'game-field');
 
@@ -27,12 +31,15 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.sprite(100, 300, 'goal-area');
     this.physics.add.sprite(700, 300, 'goal-area');
 
-    // ball
-    this.physics.add.sprite(400, 300, 'ball');
-
     // players
     this.physics.add.sprite(200, 300, 'player');
     this.physics.add.sprite(600, 300, 'bot');
+
+    // ball
+    this.ball = this.physics.add.sprite(400, 300, 'ball');
+    this.ball.setVelocity(200, 200);
+    this.ball.setCollideWorldBounds(true);
+    this.ball.setBounce(1);
 
     // pause logic
     this.input.keyboard!.once('keydown-P', (event: KeyboardEvent) => {
