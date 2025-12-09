@@ -1,7 +1,7 @@
-// import Phaser from 'phaser';
+import { Ball } from '../classes/Ball.ts';
 
 export class GameScene extends Phaser.Scene {
-  private ball!: Phaser.Physics.Arcade.Sprite;
+  private ball!: Ball | undefined;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -36,10 +36,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.sprite(600, 300, 'bot');
 
     // ball
-    this.ball = this.physics.add.sprite(400, 300, 'ball');
-    this.ball.setVelocity(200, 200);
-    this.ball.setCollideWorldBounds(true);
-    this.ball.setBounce(1);
+    this.ball = new Ball(this, 400, 300, 'ball');
 
     // pause logic
     this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => {
