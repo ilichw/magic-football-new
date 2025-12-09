@@ -42,7 +42,7 @@ export class GameScene extends Phaser.Scene {
     this.ball.setBounce(1);
 
     // pause logic
-    this.input.keyboard!.once('keydown-P', (event: KeyboardEvent) => {
+    this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => {
       event.preventDefault();
       this.scene.pause();
       this.scene.launch('PauseScene');
