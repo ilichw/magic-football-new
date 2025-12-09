@@ -1,14 +1,11 @@
 import Phaser from 'phaser';
+import { GameScene } from './scenes/GameScene.ts';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scene: {
-    create: function () {
-      this.add.text(100, 100, 'Hello, Phaser in TypeScript!', { color: 'yellow' });
-    },
-  },
+  scene: [GameScene],
 };
 
 const game = new Phaser.Game(config);
