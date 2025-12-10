@@ -9,9 +9,6 @@ export class Ball extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
 
     this.setRandomVelocity(initialVelocity);
-
-    this.setCollideWorldBounds();
-    this.setBounce(1);
   }
 
   setRandomVelocity(speed: number) {
