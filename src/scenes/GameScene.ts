@@ -1,14 +1,20 @@
 import { Ball } from '../classes/Ball.ts';
 import { Player } from '../classes/Player.ts';
 
+const constants = {
+  ballBounceStrength: 360,
+};
+
 export class GameScene extends Phaser.Scene {
   protected ball!: Ball;
   protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
   protected player!: Player;
   protected bot!: Phaser.Physics.Arcade.Sprite;
+  private constants: any;
 
   constructor() {
     super({ key: 'GameScene' });
+    this.constants = constants;
   }
 
   preload() {
@@ -69,7 +75,7 @@ export class GameScene extends Phaser.Scene {
 
   handleBallCollision(player: any, ball: any) {
     // Задайте направление отскока мяча
-    const bounceStrength = 400; // Задайте силу отскока
+    const bounceStrength = this.constants.ballBounceStrength;
 
     // Начавшаяся скорость мяча
     const dx = ball.x - player.x;
