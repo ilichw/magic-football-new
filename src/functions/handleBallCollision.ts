@@ -1,8 +1,8 @@
-// const ballBounceStrength = 360
+import { initials } from '../config';
 
 export function handleBallCollision(player: any, ball: any) {
   // Задайте направление отскока мяча
-  const bounceStrength = 360;
+  const bounceStrength = initials.ballBounceStrength;
 
   // Начавшаяся скорость мяча
   const dx = ball.x - player.x;

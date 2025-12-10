@@ -1,3 +1,4 @@
+import { initials } from '../config.ts';
 import { Actor } from './Actor.ts';
 
 export class Player extends Actor {
@@ -31,15 +32,15 @@ export class Player extends Actor {
 
     // Логика движения игрока
     if (this.keyA.isDown) {
-      vx = -200;
+      vx = -initials.playerSpeed;
     } else if (this.keyD.isDown) {
-      vx = 200;
+      vx = initials.playerSpeed;
     }
 
     if (this.keyW.isDown) {
-      vy = -200;
+      vy = -initials.playerSpeed;
     } else if (this.keyS.isDown) {
-      vy = 200;
+      vy = initials.playerSpeed;
     }
 
     if (vx || vy) {

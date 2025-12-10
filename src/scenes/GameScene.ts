@@ -2,21 +2,16 @@ import { AIPlayer } from '../classes/AIPlayer.ts';
 import { Ball } from '../classes/Ball.ts';
 import { Player } from '../classes/Player.ts';
 import { handleBallCollision } from '../functions/handleBallCollision.ts';
-
-const constants = {
-  ballBounceStrength: 360,
-};
+import { constants, initials } from '../config.ts';
 
 export class GameScene extends Phaser.Scene {
   protected ball!: Ball;
   protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
   protected player!: Player;
   protected bot!: Phaser.Physics.Arcade.Sprite;
-  private constants: any;
 
   constructor() {
     super({ key: 'GameScene' });
-    this.constants = constants;
   }
 
   preload() {
@@ -36,10 +31,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.physics.world.setBounds(80, 60, 800 - 80 * 2, 600 - 60 * 2);
+    const fieldBoundStartX = (constants.screenWidth - constants.fieldWidth) / 2,
+      fieldBoundStartY = (constants.screenHeight - constants.fieldHeight) / 2,
+      fieldBoundEndX = constants.screenWidth - fieldBoundStartX * 2,
+      fieldBoundEndY = constants.screenHeight - fieldBoundStartY * 2;
+    this.physics.world.setBounds(fieldBoundStartX, fieldBoundStartY, fieldBoundEndX, fieldBoundEndY);
 
     // game field
-    this.physics.add.sprite(400, 300, 'game-field');
+    this.physics.add.sprite(constants.screenWidth / 2, constants.screenHeight / 2, 'game-field');
 
     // ads
     this.add.text(20, 570, 'PHASER', { color: 'yellow', backgroundColor: 'green' });
@@ -47,16 +46,24 @@ export class GameScene extends Phaser.Scene {
     this.add.text(300, 570, 'Any Sponsor');
 
     // goal areas
-    const goalAreaLeft = this.physics.add.sprite(100, 300, 'goal-area');
-    const goalAreaRight = this.physics.add.sprite(700, 300, 'goal-area');
+    const goalAreaLeft = this.physics.add.sprite(
+      fieldBoundStartX + constants.goalAreaOffset,
+      constants.screenHeight / 2,
+      'goal-area'
+    );
+    const goalAreaRight = this.physics.add.sprite(
+      fieldBoundStartX + fieldBoundEndX - constants.goalAreaOffset,
+      constants.screenHeight / 2,
+      'goal-area'
+    );
     this.goalAreas = [goalAreaLeft, goalAreaRight];
 
     // ball
-    this.ball = new Ball(this, 400, 300, 'ball');
+    this.ball = new Ball(this, constants.screenWidth / 2, constants.screenHeight / 2, 'ball');
 
     // players
-    this.player = new Player(this, 200, 300, 'player');
-    this.bot = new AIPlayer(this, 600, 300, 'bot', this.ball);
+    this.player = new Player(this, initials.playerX, constants.screenHeight / 2, 'player');
+    this.bot = new AIPlayer(this, initials.botX, constants.screenHeight / 2, 'bot', this.ball);
 
     // COLLISIONS
     this.ball.setCollideWorldBounds(true, 1, 1);

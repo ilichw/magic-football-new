@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
+import { initials } from '../config.ts';
 
 export class AIPlayer extends Phaser.Physics.Arcade.Sprite {
   private ball: Phaser.Physics.Arcade.Sprite;
-  private speed: number = 150; // Скорость AI
+  private speed = initials.playerSpeed; // Скорость AI
 
   constructor(
     scene: Phaser.Scene,
