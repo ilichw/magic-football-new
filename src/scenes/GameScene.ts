@@ -1,4 +1,5 @@
 import { Ball } from '../classes/Ball.ts';
+import { Player } from '../classes/Player.ts';
 
 export class GameScene extends Phaser.Scene {
   protected ball!: Ball;
@@ -38,16 +39,7 @@ export class GameScene extends Phaser.Scene {
     this.goalAreas = [goalAreaLeft, goalAreaRight];
 
     // players
-    this.player = this.physics.add.sprite(200, 300, 'player');
-    this.anims.create({
-      key: 'walk',
-      frames: this.anims.generateFrameNumbers('player', {
-        start: 0,
-        end: 3,
-      }),
-      frameRate: 6,
-      // repeat: -1,
-    });
+    this.player = new Player(this, 200, 300, 'player');
 
     this.physics.add.sprite(600, 300, 'bot');
 
@@ -63,32 +55,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
-    // Логика игры
-    const cursors = this.input.keyboard!.createCursorKeys();
-    let vx = 0,
-      vy = 0;
-
-    // Логика движения игрока
-    if (cursors.left.isDown) {
-      vx = -200;
-    } else if (cursors.right.isDown) {
-      vx = 200;
-    }
-    if (cursors.up.isDown) {
-      vy = -200;
-    } else if (cursors.down.isDown) {
-      vy = 200;
-    }
-
-    if (vx || vy) {
-      this.player.anims.play('walk', true); // Игрок начинает анимацию
-      this.player.setFlipX(vx < 0);
-    } else {
-      // this.player.setFlipX(false);
-      this.player.anims.stop();
-    }
-
-    this.player.setVelocity(vx, vy);
+    this.player.update();
   }
 
   handleGoal() {
