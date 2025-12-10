@@ -1,3 +1,4 @@
+import AIPlayer from '../classes/AIPlayer.ts';
 import { Ball } from '../classes/Ball.ts';
 import { Player } from '../classes/Player.ts';
 
@@ -45,13 +46,14 @@ export class GameScene extends Phaser.Scene {
     const goalAreaRight = this.physics.add.sprite(700, 300, 'goal-area');
     this.goalAreas = [goalAreaLeft, goalAreaRight];
 
+    // ball
+    this.ball = new Ball(this, 400, 300, 'ball');
+
     // players
     this.player = new Player(this, 200, 300, 'player');
 
-    this.bot = this.physics.add.sprite(600, 300, 'bot');
-
-    // ball
-    this.ball = new Ball(this, 400, 300, 'ball');
+    // this.bot = this.physics.add.sprite(600, 300, 'bot');
+    this.bot = new AIPlayer(this, 600, 300, 'bot', this.ball);
 
     // COLLISIONS
     this.ball.setCollideWorldBounds(true, 1, 1);
@@ -59,7 +61,8 @@ export class GameScene extends Phaser.Scene {
     this.bot.setCollideWorldBounds(true);
 
     this.physics.add.collider(this.player, this.ball, this.handleBallCollision, undefined, this);
-    this.physics.add.collider(this.bot, this.ball);
+    this.physics.add.collider(this.bot, this.ball, this.handleBallCollision, undefined, this);
+    // this.physics.add.collider(this.bot, this.ball);
 
     this.goalAreas!.forEach((goalArea) => {
       this.physics.add.overlap(this.ball, goalArea, this.handleGoal, undefined, this);
@@ -72,6 +75,7 @@ export class GameScene extends Phaser.Scene {
   update() {
     this.ball.update();
     this.player.update();
+    this.bot.update();
   }
 
   handleBallCollision(player: any, ball: any) {
