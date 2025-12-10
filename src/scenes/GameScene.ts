@@ -1,7 +1,8 @@
 import { Ball } from '../classes/Ball.ts';
 
 export class GameScene extends Phaser.Scene {
-  private ball!: Ball | undefined;
+  protected ball!: Ball;
+  protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
 
   constructor() {
     super({ key: 'GameScene' });
@@ -28,8 +29,9 @@ export class GameScene extends Phaser.Scene {
     this.add.text(300, 570, 'Any Sponsor');
 
     // goal areas
-    this.physics.add.sprite(100, 300, 'goal-area');
-    this.physics.add.sprite(700, 300, 'goal-area');
+    const goalAreaLeft = this.physics.add.sprite(100, 300, 'goal-area');
+    const goalAreaRight = this.physics.add.sprite(700, 300, 'goal-area');
+    this.goalAreas = [goalAreaLeft, goalAreaRight];
 
     // players
     this.physics.add.sprite(200, 300, 'player');
@@ -37,6 +39,13 @@ export class GameScene extends Phaser.Scene {
 
     // ball
     this.ball = new Ball(this, 400, 300, 'ball');
+
+    this.goalAreas!.forEach((goalArea) => {
+      this.physics.add.overlap(this.ball, goalArea, () => {
+        this.scene.pause();
+        this.scene.launch('GameOverScene');
+      });
+    });
 
     // pause logic
     this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => {
