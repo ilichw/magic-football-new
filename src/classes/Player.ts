@@ -1,9 +1,13 @@
-export class Player extends Phaser.Physics.Arcade.Sprite {
+import { Actor } from './Actor.ts';
+
+export class Player extends Actor {
+  private cursors: any;
+
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
-    scene.add.existing(this);
-    scene.physics.add.existing(this);
+    // keyboard settings
+    this.cursors = this.scene.input.keyboard!.createCursorKeys();
 
     this.anims.create({
       key: 'walk',
@@ -16,19 +20,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
-    const cursors = this.scene.input.keyboard!.createCursorKeys();
     let vx = 0,
       vy = 0;
 
     // Логика движения игрока
-    if (cursors.left.isDown) {
+    if (this.cursors.left.isDown) {
       vx = -200;
-    } else if (cursors.right.isDown) {
+    } else if (this.cursors.right.isDown) {
       vx = 200;
     }
-    if (cursors.up.isDown) {
+    if (this.cursors.up.isDown) {
       vy = -200;
-    } else if (cursors.down.isDown) {
+    } else if (this.cursors.down.isDown) {
       vy = 200;
     }
 
