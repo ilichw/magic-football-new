@@ -4,7 +4,7 @@ import { Player } from '../classes/Player.ts';
 export class GameScene extends Phaser.Scene {
   protected ball!: Ball;
   protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
-  protected player!: Phaser.Physics.Arcade.Sprite;
+  protected player!: Player;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -47,11 +47,11 @@ export class GameScene extends Phaser.Scene {
     this.ball = new Ball(this, 400, 300, 'ball');
 
     this.goalAreas!.forEach((goalArea) => {
-      this.physics.add.overlap(this.ball, goalArea, () => this.handleGoal());
+      this.physics.add.overlap(this.ball, goalArea, this.handleGoal, undefined, this);
     });
 
     // pause logic
-    this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => this.handlePauseKeyPress(event));
+    this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
   }
 
   update() {
