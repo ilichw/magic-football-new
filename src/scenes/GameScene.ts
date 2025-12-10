@@ -25,7 +25,11 @@ export class GameScene extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
-    this.load.image('bot', './assets/bot.png');
+    this.load.spritesheet('bot', './assets/bot_spritesheet.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
     this.load.image('ball', './assets/ball.png');
     this.load.image('game-field', './assets/game-field.png');
     this.load.image('goal-area', './assets/goal-area.png');

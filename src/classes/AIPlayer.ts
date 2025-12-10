@@ -17,21 +17,42 @@ export class AIPlayer extends Phaser.Physics.Arcade.Sprite {
     scene.physics.world.enable(this);
     scene.add.existing(this);
 
-    this.setCollideWorldBounds(true);
+    // this.setCollideWorldBounds(true);
+    this.anims.create({
+      key: 'walk',
+      frames: this.anims.generateFrameNumbers('bot', {
+        start: 0,
+        end: 3,
+      }),
+      frameRate: 6,
+    });
   }
 
   update() {
-    // Логика движения AI к мячу
-    if (this.ball) {
-      const distance = Phaser.Math.Distance.Between(this.x, this.y, this.ball.x, this.ball.y);
-      const angle = Phaser.Math.Angle.Between(this.x, this.y, this.ball.x, this.ball.y);
+    if (this.ball === undefined) return;
 
-      // Если AI игрок ближе определенного расстояния к мячу, двигаемся к мячу
-      if (distance < 300) {
-        this.setVelocity(Math.cos(angle) * this.speed, Math.sin(angle) * this.speed);
-      } else {
-        this.setVelocity(0); // Остановка, если мяч далеко
-      }
+    let vx = 0,
+      vy = 0;
+
+    // Логика движения AI к мячу
+    const distance = Phaser.Math.Distance.Between(this.x, this.y, this.ball.x, this.ball.y);
+    const angle = Phaser.Math.Angle.Between(this.x, this.y, this.ball.x, this.ball.y);
+
+    // Если AI игрок ближе определенного расстояния к мячу, двигаемся к мячу
+    if (distance < 300) {
+      vx = Math.cos(angle) * this.speed;
+      vy = Math.sin(angle) * this.speed;
+    } else {
+      vx = vy = 0;
     }
+
+    if (vx || vy) {
+      this.anims.play('walk', true); // Игрок начинает анимацию
+      this.setFlipX(vx < 0);
+    } else {
+      this.anims.stop();
+    }
+
+    this.setVelocity(vx, vy);
   }
 }
