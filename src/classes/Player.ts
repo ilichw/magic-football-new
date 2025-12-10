@@ -1,13 +1,19 @@
 import { Actor } from './Actor.ts';
 
 export class Player extends Actor {
-  private cursors: any;
+  private keyW: any;
+  private keyA: any;
+  private keyS: any;
+  private keyD: any;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
     // keyboard settings
-    this.cursors = this.scene.input.keyboard!.createCursorKeys();
+    this.keyW = this.scene.input.keyboard!.addKey('W');
+    this.keyA = this.scene.input.keyboard!.addKey('A');
+    this.keyS = this.scene.input.keyboard!.addKey('S');
+    this.keyD = this.scene.input.keyboard!.addKey('D');
 
     this.anims.create({
       key: 'walk',
@@ -24,14 +30,15 @@ export class Player extends Actor {
       vy = 0;
 
     // Логика движения игрока
-    if (this.cursors.left.isDown) {
+    if (this.keyA.isDown) {
       vx = -200;
-    } else if (this.cursors.right.isDown) {
+    } else if (this.keyD.isDown) {
       vx = 200;
     }
-    if (this.cursors.up.isDown) {
+
+    if (this.keyW.isDown) {
       vy = -200;
-    } else if (this.cursors.down.isDown) {
+    } else if (this.keyS.isDown) {
       vy = 200;
     }
 
