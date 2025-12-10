@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-export default class AIPlayer extends Phaser.Physics.Arcade.Sprite {
+export class AIPlayer extends Phaser.Physics.Arcade.Sprite {
   private ball: Phaser.Physics.Arcade.Sprite;
   private speed: number = 150; // Скорость AI
 

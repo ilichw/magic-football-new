@@ -1,6 +1,7 @@
-import AIPlayer from '../classes/AIPlayer.ts';
+import { AIPlayer } from '../classes/AIPlayer.ts';
 import { Ball } from '../classes/Ball.ts';
 import { Player } from '../classes/Player.ts';
+import { handleBallCollision } from '../functions/handleBallCollision.ts';
 
 const constants = {
   ballBounceStrength: 360,
@@ -51,8 +52,6 @@ export class GameScene extends Phaser.Scene {
 
     // players
     this.player = new Player(this, 200, 300, 'player');
-
-    // this.bot = this.physics.add.sprite(600, 300, 'bot');
     this.bot = new AIPlayer(this, 600, 300, 'bot', this.ball);
 
     // COLLISIONS
@@ -60,9 +59,8 @@ export class GameScene extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
     this.bot.setCollideWorldBounds(true);
 
-    this.physics.add.collider(this.player, this.ball, this.handleBallCollision, undefined, this);
-    this.physics.add.collider(this.bot, this.ball, this.handleBallCollision, undefined, this);
-    // this.physics.add.collider(this.bot, this.ball);
+    this.physics.add.collider(this.player, this.ball, handleBallCollision, undefined, this);
+    this.physics.add.collider(this.bot, this.ball, handleBallCollision, undefined, this);
 
     this.goalAreas!.forEach((goalArea) => {
       this.physics.add.overlap(this.ball, goalArea, this.handleGoal, undefined, this);
@@ -76,23 +74,6 @@ export class GameScene extends Phaser.Scene {
     this.ball.update();
     this.player.update();
     this.bot.update();
-  }
-
-  handleBallCollision(player: any, ball: any) {
-    // Задайте направление отскока мяча
-    const bounceStrength = this.constants.ballBounceStrength;
-
-    // Начавшаяся скорость мяча
-    const dx = ball.x - player.x;
-    const dy = ball.y - player.y;
-
-    // Нормализовать вектор
-    const length = Math.sqrt(dx * dx + dy * dy);
-    const normalizedX = dx / length;
-    const normalizedY = dy / length;
-
-    // Задаем новую скорость мяча
-    ball.setVelocity(bounceStrength * normalizedX, bounceStrength * normalizedY);
   }
 
   handleGoal() {
