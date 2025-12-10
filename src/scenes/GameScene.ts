@@ -70,6 +70,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
+    this.ball.update();
     this.player.update();
   }
 
