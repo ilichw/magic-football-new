@@ -41,21 +41,25 @@ export class GameScene extends Phaser.Scene {
     this.ball = new Ball(this, 400, 300, 'ball');
 
     this.goalAreas!.forEach((goalArea) => {
-      this.physics.add.overlap(this.ball, goalArea, () => {
-        this.scene.pause();
-        this.scene.launch('GameOverScene');
-      });
+      this.physics.add.overlap(this.ball, goalArea, () => this.handleGoal());
     });
 
     // pause logic
-    this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => {
-      event.preventDefault();
-      this.scene.pause();
-      this.scene.launch('PauseScene');
-    });
+    this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => this.handlePauseKeyPress(event));
   }
 
   update() {
     // Логика игры
+  }
+
+  handleGoal() {
+    this.scene.pause();
+    this.scene.launch('GameOverScene');
+  }
+
+  handlePauseKeyPress(event: KeyboardEvent) {
+    event.preventDefault();
+    this.scene.pause();
+    this.scene.launch('PauseScene');
   }
 }

@@ -10,11 +10,8 @@ export class GameOverScene extends Phaser.Scene {
     background.fillRect(0, 0, 800, 600);
 
     // game over text
-    this.add.text(300, 250, 'Гол!', { fontSize: '32px', color: '#fff' });
-    this.add.text(250, 300, 'Нажмите пробел для продолжения', {
-      fontSize: '20px',
-      color: '#fff',
-    });
+    this.add.text(300, 250, 'Гол!', { fontSize: '32px', color: 'white' });
+    this.add.text(250, 300, 'Нажмите пробел для продолжения', { fontSize: '20px', color: 'white' });
 
     // new game start logic
     this.input.keyboard!.once('keydown-SPACE', (event: KeyboardEvent) => {
