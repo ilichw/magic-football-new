@@ -3,6 +3,7 @@ import { Ball } from '../classes/Ball.ts';
 import { Player } from '../classes/Player.ts';
 import { handleBallCollision } from '../functions/handleBallCollision.ts';
 import { constants, initials } from '../config.ts';
+import gameState from '../state.ts';
 
 export class GameScene extends Phaser.Scene {
   protected ball!: Ball;
@@ -73,9 +74,11 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.ball, handleBallCollision, undefined, this);
     this.physics.add.collider(this.bot, this.ball, handleBallCollision, undefined, this);
 
-    this.goalAreas!.forEach((goalArea) => {
-      this.physics.add.overlap(this.ball, goalArea, this.handleGoal, undefined, this);
+    this.goalAreas!.forEach((goalArea, index) => {
+      this.physics.add.overlap(this.ball, goalArea, () => this.handleGoal(index), undefined, this);
     });
+
+    this.scene.launch('ScoreScene');
 
     // pause logic
     this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
@@ -87,7 +90,19 @@ export class GameScene extends Phaser.Scene {
     this.bot.update();
   }
 
-  handleGoal() {
+  handleGoal(goalIndex: number) {
+    if (goalIndex === 0) {
+      gameState.score.team2 += 1;
+    } else {
+      gameState.score.team1 += 1;
+    }
+
+    // обновить ScoreScene (если активна)
+    const scoreScene = this.scene.get('ScoreScene') as Phaser.Scene | undefined;
+    if (scoreScene) {
+      scoreScene.events.emit('updateScore');
+    }
+
     this.scene.pause();
     this.scene.launch('GameOverScene');
   }
