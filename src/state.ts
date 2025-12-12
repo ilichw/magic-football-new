@@ -1,39 +1,26 @@
-export const _GameState = {
-  score: { player: 0, bot: 0 },
-  reset() {
-    this.score.player = 0;
-    this.score.bot = 0;
-  },
-};
+class Team {
+  public score: number;
+  public name: string;
 
-class Score {
-  public team1: number;
-  public team2: number;
-
-  constructor() {
-    this.team1 = 0;
-    this.team2 = 0;
+  constructor(name: string) {
+    this.score = 0;
+    this.name = name;
   }
 
-  setTeam1Score(newScore: number) {
-    this.team1 = newScore;
+  increaseScore() {
+    this.score += 1;
   }
 
-  setTeam2Score(newScore: number) {
-    this.team2 = newScore;
-  }
-
-  reset() {
-    this.team1 = 0;
-    this.team2 = 0;
+  resetScore() {
+    this.score = 0;
   }
 }
 
 class GameState {
-  public score!: Score;
+  public teams!: Team[];
 
   constructor() {
-    this.score = new Score();
+    this.teams = [new Team('Team 1'), new Team('Team 2')];
   }
 }
 

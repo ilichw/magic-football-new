@@ -57,7 +57,7 @@ export class GameScene extends Phaser.Scene {
       constants.screenHeight / 2,
       'goal-area'
     );
-    this.goalAreas = [goalAreaLeft, goalAreaRight];
+    this.goalAreas = [goalAreaRight, goalAreaLeft];
 
     // ball
     this.ball = new Ball(this, constants.screenWidth / 2, constants.screenHeight / 2, 'ball');
@@ -91,11 +91,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   handleGoal(goalIndex: number) {
-    if (goalIndex === 0) {
-      gameState.score.team2 += 1;
-    } else {
-      gameState.score.team1 += 1;
-    }
+    gameState.teams[goalIndex].increaseScore();
+    // if (goalIndex === 0) {
+    //   gameState.score.team2 += 1;
+    // } else {
+    //   gameState.score.team1 += 1;
+    // }
 
     // обновить ScoreScene (если активна)
     const scoreScene = this.scene.get('ScoreScene') as Phaser.Scene | undefined;

@@ -20,7 +20,12 @@ export class ScoreScene extends Phaser.Scene {
   }
 
   createScoreText() {
-    return `Score: ${gameState.score.team1} - ${gameState.score.team2}`;
+    return (
+      `${gameState.teams[0].name}   ` +
+      `${gameState.teams[0].score} - ` +
+      `${gameState.teams[1].score}   ` +
+      `${gameState.teams[1].name}`
+    );
   }
 
   refresh() {
