@@ -1,6 +1,6 @@
-export class GameOverScene extends Phaser.Scene {
+export class GoalScene extends Phaser.Scene {
   constructor() {
-    super({ key: 'GameOverScene' });
+    super({ key: 'GoalScene' });
   }
 
   create() {

@@ -97,7 +97,7 @@ export class GameScene extends Phaser.Scene {
     gameState.teams[goalIndex].increaseScore();
     this.scene.get('ScoreScene').events.emit('updateScore');
     this.scene.pause();
-    this.scene.launch('GameOverScene');
+    this.scene.launch('GoalScene');
   }
 
   handlePauseKeyPress(event: KeyboardEvent) {
