@@ -57,6 +57,9 @@ export class GameScene extends Phaser.Scene {
       constants.screenHeight / 2,
       'goal-area'
     );
+
+    // ворота в обратном порядке чтобы соответствовало номерам команд
+    // типа команда 0 левая а забить надо в ворота 0 правые
     this.goalAreas = [goalAreaRight, goalAreaLeft];
 
     // ball
@@ -92,18 +95,7 @@ export class GameScene extends Phaser.Scene {
 
   handleGoal(goalIndex: number) {
     gameState.teams[goalIndex].increaseScore();
-    // if (goalIndex === 0) {
-    //   gameState.score.team2 += 1;
-    // } else {
-    //   gameState.score.team1 += 1;
-    // }
-
-    // обновить ScoreScene (если активна)
-    const scoreScene = this.scene.get('ScoreScene') as Phaser.Scene | undefined;
-    if (scoreScene) {
-      scoreScene.events.emit('updateScore');
-    }
-
+    this.scene.get('ScoreScene').events.emit('updateScore');
     this.scene.pause();
     this.scene.launch('GameOverScene');
   }
