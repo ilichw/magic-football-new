@@ -18,7 +18,6 @@ export class GoalScene extends Phaser.Scene {
       event.preventDefault();
       this.scene.stop();
       this.scene.launch('GameScene');
-      // setTimeout(() => {this.scene.launch('GameScene')}, 5000)
     });
   }
 }

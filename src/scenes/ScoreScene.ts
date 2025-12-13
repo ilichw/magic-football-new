@@ -5,7 +5,7 @@ export class ScoreScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
 
   constructor() {
-    super({ key: 'ScoreScene', active: true }); // active: true — чтобы всегда отображалась, можно false и запускать вручную
+    super({ key: 'ScoreScene', active: true });
   }
 
   create() {
@@ -15,7 +15,6 @@ export class ScoreScene extends Phaser.Scene {
       color: '#fff',
     });
 
-    // слушаем событие обновления счёта (альтернатива — сцена опрашивает GameState в update)
     this.events.on('updateScore', this.refresh, this);
   }
 

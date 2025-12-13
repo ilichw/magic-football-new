@@ -1,24 +1,17 @@
-import Phaser from 'phaser';
 import { initials } from '../config.ts';
+import type { Ball } from './Ball.ts';
 
 export class AIPlayer extends Phaser.Physics.Arcade.Sprite {
-  private ball: Phaser.Physics.Arcade.Sprite;
+  private ball: Ball;
   private speed = initials.playerSpeed; // Скорость AI
 
-  constructor(
-    scene: Phaser.Scene,
-    x: number,
-    y: number,
-    texture: string,
-    ball: Phaser.Physics.Arcade.Sprite
-  ) {
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, ball: Ball) {
     super(scene, x, y, texture); // 'player' - это имя вашего спрайта игрока
 
     this.ball = ball;
     scene.physics.world.enable(this);
     scene.add.existing(this);
 
-    // this.setCollideWorldBounds(true);
     this.anims.create({
       key: 'walk',
       frames: this.anims.generateFrameNumbers('bot', {
