@@ -1,4 +1,7 @@
 export class Actor extends Phaser.Physics.Arcade.Sprite {
+  private lastShoot = 0; // время крайней атаки
+  private shootCooldown = 1500; // время перезарядки ms
+
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     // создание спрайта
     super(scene, x, y, texture);
@@ -9,8 +12,12 @@ export class Actor extends Phaser.Physics.Arcade.Sprite {
   }
 
   // логика атаки
-  releaseAttack() {
-    console.log('attack released');
+  shoot(time: number) {
+    // атака происходит только ели прошла перезарядка
+    if (time - this.lastShoot >= this.shootCooldown) {
+      console.log(`shoot! ${time}`);
+      this.lastShoot = time;
+    }
   }
 
   // логика получения урона

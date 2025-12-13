@@ -11,10 +11,10 @@ export class GoalScene extends Phaser.Scene {
 
     // game over text
     this.add.text(300, 250, 'Гол!', { fontSize: '32px', color: 'white' });
-    this.add.text(250, 300, 'Нажмите пробел для продолжения', { fontSize: '20px', color: 'white' });
+    this.add.text(250, 300, 'Нажмите P для продолжения', { fontSize: '20px', color: 'white' });
 
     // new game start logic
-    this.input.keyboard!.once('keydown-SPACE', (event: KeyboardEvent) => {
+    this.input.keyboard!.once('keydown-P', (event: KeyboardEvent) => {
       event.preventDefault();
       this.scene.stop();
       this.scene.launch('GameScene');

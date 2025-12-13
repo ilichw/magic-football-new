@@ -87,9 +87,9 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
   }
 
-  update() {
+  update(time: number, delta: number) {
     this.ball.update();
-    this.player.update();
+    this.player.update(time, delta);
     this.bot.update();
   }
 

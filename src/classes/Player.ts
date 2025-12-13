@@ -6,6 +6,7 @@ export class Player extends Actor {
   private keyA: any;
   private keyS: any;
   private keyD: any;
+  private keySpace: any;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
@@ -15,6 +16,7 @@ export class Player extends Actor {
     this.keyA = this.scene.input.keyboard!.addKey('A');
     this.keyS = this.scene.input.keyboard!.addKey('S');
     this.keyD = this.scene.input.keyboard!.addKey('D');
+    this.keySpace = this.scene.input.keyboard!.addKey(32);
 
     this.anims.create({
       key: 'walk',
@@ -26,11 +28,16 @@ export class Player extends Actor {
     });
   }
 
-  update() {
+  update(time: number, delta: number) {
+    // логика атаки игрока
+    if (this.keySpace.isDown) {
+      this.shoot(time);
+    }
+
+    // Логика движения игрока
     let vx = 0,
       vy = 0;
 
-    // Логика движения игрока
     if (this.keyA.isDown) {
       vx = -initials.playerSpeed;
     } else if (this.keyD.isDown) {
