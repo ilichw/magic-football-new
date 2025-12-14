@@ -17,7 +17,7 @@ export class PauseScene extends Phaser.Scene {
     this.input.keyboard!.once('keydown-P', (event: KeyboardEvent) => {
       event.preventDefault();
       this.scene.stop();
-      this.scene.resume('GameScene');
+      this.scene.resume('MainScene');
     });
   }
 }

@@ -5,14 +5,14 @@ import { handleBallCollision } from '../functions/handleBallCollision.ts';
 import { constants, initials } from '../config.ts';
 import gameState from '../state.ts';
 
-export class GameScene extends Phaser.Scene {
+export class MainScene extends Phaser.Scene {
   protected ball!: Ball;
   protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
   protected player!: Player;
   protected bot!: AIPlayer;
 
   constructor() {
-    super({ key: 'GameScene' });
+    super({ key: 'MainScene' });
   }
 
   preload() {

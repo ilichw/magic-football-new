@@ -17,7 +17,7 @@ export class GoalScene extends Phaser.Scene {
     this.input.keyboard!.once('keydown-P', (event: KeyboardEvent) => {
       event.preventDefault();
       this.scene.stop();
-      this.scene.launch('GameScene');
+      this.scene.launch('MainScene');
     });
   }
 }

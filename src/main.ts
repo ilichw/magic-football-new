@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GameScene } from './scenes/GameScene.ts';
+import { MainScene } from './scenes/MainScene.ts';
 import { PauseScene } from './scenes/PauseScene.ts';
 import { GoalScene } from './scenes/GoalScene.ts';
 import { constants } from './config.ts';
@@ -12,7 +12,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
   },
-  scene: [GameScene, PauseScene, GoalScene, ScoreScene],
+  scene: [MainScene, PauseScene, GoalScene, ScoreScene],
 };
 
 window.onload = () => {

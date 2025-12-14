@@ -1,3 +1,5 @@
+// import gameState from '../state';
+
 export class Actor extends Phaser.Physics.Arcade.Sprite {
   private lastShoot = 0; // время крайней атаки
   private shootCooldown = 1500; // время перезарядки ms
@@ -15,6 +17,7 @@ export class Actor extends Phaser.Physics.Arcade.Sprite {
   shoot(time: number) {
     // атака происходит только ели прошла перезарядка
     if (time - this.lastShoot >= this.shootCooldown) {
+      // gameState.createAttack();
       console.log(`shoot! ${time}`);
       this.lastShoot = time;
     }
