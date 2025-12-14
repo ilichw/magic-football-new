@@ -68,8 +68,9 @@ export class MainScene extends Phaser.Scene {
     this.ball = new Ball(this, fieldCenterX, fieldCenterY, 'ball');
 
     // players
-    this.player = new Player(this, initials.playerX, fieldCenterY, 'player');
-    this.bot = new AIPlayer(this, initials.botX, fieldCenterY, 'bot', this.ball);
+    this.player = new Player(this, initials.playerX, fieldCenterY, 'player', 'player 1');
+    this.bot = new AIPlayer(this, initials.botX, fieldCenterY, 'bot', 'player 2');
+    this.bot.addObjectToFollow(this.ball);
     this.players = [this.player, this.bot];
 
     // collisions with field bounds
@@ -111,13 +112,31 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
-  handleUserHit() {
-    // как находить атаку по id
+  handleUserShoot(userX: number, userY: number, userName: string, time: number) {
+    // логика создания новой атаки (спрайта)
+    const attack = new Attack(this, userX, userY, 'attack', time);
+    this.attacks.push(attack);
+
+    // логика добавления удаления атаки при попадании в игрока
+    // + получения игроком урона
+    this.players
+      .filter((player) => player.name !== userName)
+      .forEach((player) => {
+        this.physics.add.collider(player, attack, (player, attack: any) => {
+          // player.getDamage()
+          this.events.emit('userHit', attack.creationTime);
+        });
+      });
   }
 
-  handleUserShoot(userX: number, userY: number) {
-    const attack = new Attack(this, userX, userY, 'attack');
-    this.attacks.push(attack);
+  handleUserHit(time: number) {
+    console.log(time);
+    // как находить атаку по id
+    this.attacks
+      .filter((attack) => attack.creationTime === time)
+      .forEach((attack) => {
+        attack.destroy();
+      });
   }
 
   createAds() {

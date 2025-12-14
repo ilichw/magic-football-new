@@ -3,13 +3,13 @@ import { Actor } from './Actor.ts';
 import type { Ball } from './Ball.ts';
 
 export class AIPlayer extends Actor {
-  private ball: Ball;
+  private ball: Ball | null;
   private speed = initials.playerSpeed; // Скорость AI
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, ball: Ball) {
-    super(scene, x, y, texture); // 'player' - это имя вашего спрайта игрока
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string) {
+    super(scene, x, y, texture, name);
 
-    this.ball = ball;
+    this.ball = null;
     scene.physics.world.enable(this);
     scene.add.existing(this);
 
@@ -23,8 +23,12 @@ export class AIPlayer extends Actor {
     });
   }
 
+  addObjectToFollow(object: Ball) {
+    this.ball = object;
+  }
+
   update() {
-    if (this.ball === undefined) return;
+    if (this.ball === null) return;
 
     let vx = 0,
       vy = 0;

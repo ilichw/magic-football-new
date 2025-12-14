@@ -8,10 +8,10 @@ export class Player extends Actor {
   private keyD: any;
   private keySpace: any;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
-    super(scene, x, y, texture);
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string) {
+    super(scene, x, y, texture, name);
 
-    // keyboard settings
+    // логика управления игрока
     this.keyW = this.scene.input.keyboard!.addKey('W');
     this.keyA = this.scene.input.keyboard!.addKey('A');
     this.keyS = this.scene.input.keyboard!.addKey('S');
