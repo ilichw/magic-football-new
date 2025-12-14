@@ -101,8 +101,14 @@ export class MainScene extends Phaser.Scene {
 
   update(time: number, delta: number) {
     this.ball.update();
-    this.player.update(time, delta);
-    this.bot.update();
+
+    this.players.forEach((player) => {
+      player.update(time, delta);
+    });
+
+    this.attacks.forEach((attack) => {
+      attack.update(time, delta);
+    });
   }
 
   handleUserHit() {

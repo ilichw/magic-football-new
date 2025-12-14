@@ -17,7 +17,7 @@ export class Actor extends Phaser.Physics.Arcade.Sprite {
   shoot(time: number) {
     // атака происходит только ели прошла перезарядка
     if (time - this.lastShoot >= this.shootCooldown) {
-      console.log(`shoot! ${time}   x: ${this.x}`);
+      // console.log(`shoot! ${time}   x: ${this.x}`);
 
       this.scene.events.emit('userShoots', this.x, this.y);
 
