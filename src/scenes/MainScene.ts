@@ -4,12 +4,17 @@ import { Player } from '../classes/Player.ts';
 import { handleBallCollision } from '../functions/handleBallCollision.ts';
 import { constants, initials } from '../config.ts';
 import gameState from '../state.ts';
+import { Attack } from '../classes/Attack.ts';
+import type { Actor } from '../classes/Actor.ts';
 
 export class MainScene extends Phaser.Scene {
   protected ball!: Ball;
-  protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
   protected player!: Player;
   protected bot!: AIPlayer;
+
+  protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
+  protected attacks: Attack[] = [];
+  protected players!: Actor[];
 
   constructor() {
     super({ key: 'MainScene' });
@@ -28,43 +33,44 @@ export class MainScene extends Phaser.Scene {
     this.load.image('ball', './assets/ball.png');
     this.load.image('game-field', './assets/game-field.png');
     this.load.image('goal-area', './assets/goal-area.png');
+    this.load.image('attack', './assets/attack.png');
   }
 
   create() {
     // определение границ игрового мира
-    // (выглядит жестко) мб это в отдельную функцию ладно посмотрим
-    const fieldBoundStartX = (constants.screenWidth - constants.fieldWidth) / 2,
-      fieldBoundStartY = (constants.screenHeight - constants.fieldHeight) / 2,
-      fieldBoundEndX = constants.screenWidth - fieldBoundStartX * 2,
-      fieldBoundEndY = constants.screenHeight - fieldBoundStartY * 2;
-    this.physics.world.setBounds(fieldBoundStartX, fieldBoundStartY, fieldBoundEndX, fieldBoundEndY);
+    const fieldLeftX = (constants.screenWidth - constants.fieldWidth) / 2,
+      fieldLeftY = (constants.screenHeight - constants.fieldHeight) / 2,
+      fieldRightX = constants.screenWidth - fieldLeftX * 2,
+      fieldRightY = constants.screenHeight - fieldLeftY * 2;
+    this.physics.world.setBounds(fieldLeftX, fieldLeftY, fieldRightX, fieldRightY);
 
-    const gameFieldCenterX = constants.screenWidth / 2;
-    const gameFieldCenterY = constants.screenHeight / 2;
+    const fieldCenterX = constants.screenWidth / 2;
+    const fieldCenterY = constants.screenHeight / 2;
 
     // game field
-    this.physics.add.sprite(gameFieldCenterX, gameFieldCenterY, 'game-field');
+    this.physics.add.sprite(fieldCenterX, fieldCenterY, 'game-field');
 
     // ads
     this.createAds();
 
     // goal areas
-    const goalAreaLeftX = fieldBoundStartX + constants.goalAreaOffset;
-    const goalAreaLeft = this.physics.add.sprite(goalAreaLeftX, gameFieldCenterY, 'goal-area');
+    const goalAreaLeftX = fieldLeftX + constants.goalAreaOffset;
+    const goalAreaLeft = this.physics.add.sprite(goalAreaLeftX, fieldCenterY, 'goal-area');
 
-    const goalAreaRightX = fieldBoundStartX + fieldBoundEndX - constants.goalAreaOffset;
-    const goalAreaRight = this.physics.add.sprite(goalAreaRightX, gameFieldCenterY, 'goal-area');
+    const goalAreaRightX = fieldLeftX + fieldRightX - constants.goalAreaOffset;
+    const goalAreaRight = this.physics.add.sprite(goalAreaRightX, fieldCenterY, 'goal-area');
 
     // ворота в обратном порядке чтобы соответствовало номерам команд
     // типа команда 0 левая а забить надо в ворота 0 правые
     this.goalAreas = [goalAreaRight, goalAreaLeft];
 
     // ball
-    this.ball = new Ball(this, gameFieldCenterX, gameFieldCenterY, 'ball');
+    this.ball = new Ball(this, fieldCenterX, fieldCenterY, 'ball');
 
     // players
-    this.player = new Player(this, initials.playerX, gameFieldCenterY, 'player');
-    this.bot = new AIPlayer(this, initials.botX, gameFieldCenterY, 'bot', this.ball);
+    this.player = new Player(this, initials.playerX, fieldCenterY, 'player');
+    this.bot = new AIPlayer(this, initials.botX, fieldCenterY, 'bot', this.ball);
+    this.players = [this.player, this.bot];
 
     // collisions with field bounds
     this.ball.setCollideWorldBounds(true, 1, 1);
@@ -85,12 +91,27 @@ export class MainScene extends Phaser.Scene {
 
     // pause logic
     this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
+
+    // логика создания атаки
+    this.events.on('userShoots', this.handleUserShoot, this);
+
+    // логика удаления атаки + получения урона игрока
+    this.events.on('userHit', this.handleUserHit, this);
   }
 
   update(time: number, delta: number) {
     this.ball.update();
     this.player.update(time, delta);
     this.bot.update();
+  }
+
+  handleUserHit() {
+    // как находить атаку по id
+  }
+
+  handleUserShoot(userX: number, userY: number) {
+    const attack = new Attack(this, userX, userY, 'attack');
+    this.attacks.push(attack);
   }
 
   createAds() {

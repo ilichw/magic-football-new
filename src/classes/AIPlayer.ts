@@ -1,7 +1,8 @@
 import { initials } from '../config.ts';
+import { Actor } from './Actor.ts';
 import type { Ball } from './Ball.ts';
 
-export class AIPlayer extends Phaser.Physics.Arcade.Sprite {
+export class AIPlayer extends Actor {
   private ball: Ball;
   private speed = initials.playerSpeed; // Скорость AI
 
