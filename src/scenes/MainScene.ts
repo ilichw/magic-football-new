@@ -9,8 +9,8 @@ import type { Actor } from '../classes/Actor.ts';
 
 export class MainScene extends Phaser.Scene {
   goal!: boolean;
-  // goalTriggerCooldownMs = 500;
-  // lastTriggerAt: Record<string, number> = {};
+  goalTriggerCooldown = 100;
+  goalTriggerTime!: number;
 
   protected ball!: Ball;
   protected player!: Player;
@@ -103,7 +103,7 @@ export class MainScene extends Phaser.Scene {
 
   update(time: number, delta: number) {
     // check goal logic
-    this.checkGoal();
+    this.checkGoal(time);
 
     // update sprites
     this.ball.update();
@@ -117,7 +117,7 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
-  checkGoal() {
+  checkGoal(time: number) {
     // получить текущие координаты мяча на поле
     const bounds = this.ball.getBounds();
 
@@ -125,24 +125,26 @@ export class MainScene extends Phaser.Scene {
     const tiles = this.goalLayer.getTilesWithinWorldXY(bounds.x, bounds.y, bounds.width, bounds.height);
 
     for (let tile of tiles) {
-      // это чтобы не срабатывало повторное определение гола когда мяч в воротах
-      if (this.goal) break;
+      if (this.goal) {
+        // событие мяч в воротах триггерится с задержкой так задумано
+        if (time - this.goalTriggerTime >= this.goalTriggerCooldown) {
+          this.handleTriggerTile(tile, this.ball);
+        } else break; // чтобы не срабатывало повторное определение гола когда мяч в воротах
+      }
 
       // а это зачем ладно посмотрим
       if (!tile) continue;
 
       if (tile.properties && tile.properties.trigger === true) {
-        // вызов события что гол забит
-        this.handleTriggerTile(tile, this.ball);
-
         // флаг что гол забит
         this.goal = true;
+        this.goalTriggerTime = time;
       }
     }
   }
 
   handleTriggerTile(goalArea: any, ball: Ball) {
-    console.log('goal!', this.goal);
+    // console.log('goal!', this.goal);
     // console.log(goalArea);
     this.scene.pause();
     this.scene.launch('GoalScene');
