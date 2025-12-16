@@ -3,14 +3,19 @@ import { Ball } from '../classes/Ball.ts';
 import { Player } from '../classes/Player.ts';
 import { handleBallCollision } from '../functions/handleBallCollision.ts';
 import { constants, initials } from '../config.ts';
-import gameState from '../state.ts';
 import { Attack } from '../classes/Attack.ts';
 import type { Actor } from '../classes/Actor.ts';
+// import { GameState } from '../classes/GameState.ts';
+import { Team } from '../classes/Team.ts';
+// import type { ScoreScene } from './ScoreScene.ts';
+import gameState from '../state.ts';
 
 export class MainScene extends Phaser.Scene {
-  goal!: boolean;
-  goalTriggerCooldown = 100;
-  goalTriggerTime!: number;
+  // protected gameState!: GameState;
+
+  protected goal!: boolean;
+  protected goalTriggerCooldown = 100;
+  protected goalTriggerTime!: number;
 
   protected ball!: Ball;
   protected player!: Player;
@@ -50,6 +55,10 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
+    // инициализация менеджера состояния игры
+    // (nafig)
+    // this.gameState = new GameState();
+
     this.goal = false;
 
     // определение границ игрового мира
@@ -85,10 +94,14 @@ export class MainScene extends Phaser.Scene {
     // players
     this.createPlayers(fieldCenterY, fieldCenterY);
 
-    // colliders logic
+    // команды
+    this.createTeams();
+
+    // collision logic
     this.setColliders();
 
     // score logic
+    // (this.scene.get('ScoreScene') as ScoreScene).setGameState(this.gameState);
     this.scene.launch('ScoreScene');
 
     // pause logic
@@ -144,7 +157,6 @@ export class MainScene extends Phaser.Scene {
   }
 
   handleTriggerTile(goalArea: any, ball: Ball) {
-    // console.log('goal!', this.goal);
     // console.log(goalArea);
     this.scene.pause();
     this.scene.launch('GoalScene');
@@ -177,6 +189,16 @@ export class MainScene extends Phaser.Scene {
     this.players = [this.player, this.bot];
   }
 
+  createTeams() {
+    const team1 = new Team('Team 1');
+    team1.addPlayer(this.player);
+    gameState.addTeam(team1);
+
+    const team2 = new Team('Team 2');
+    team2.addPlayer(this.bot);
+    gameState.addTeam(team2);
+  }
+
   setColliders() {
     this.ball.setBounce(0.9);
     this.physics.add.collider(this.ball, this.boundLayer);
@@ -185,21 +207,12 @@ export class MainScene extends Phaser.Scene {
       player.setBounce(0.6);
       this.physics.add.collider(player, this.boundLayer);
     });
-    // collisions with field bounds
-    // this.ball.setCollideWorldBounds(true, 1, 1);
-    // this.player.setCollideWorldBounds(true);
-    // this.bot.setCollideWorldBounds(true);
 
-    // this.player
     this.physics.add.collider(this.ball, this.boundLayer);
+
     // collisions with ball
     this.physics.add.collider(this.player, this.ball, handleBallCollision, undefined, this);
     this.physics.add.collider(this.bot, this.ball, handleBallCollision, undefined, this);
-
-    // goal logic
-    this.goalAreas!.forEach((goalArea, index) => {
-      this.physics.add.overlap(this.ball, goalArea, () => this.handleGoal(index), undefined, this);
-    });
   }
 
   handleUserShoot(userX: number, userY: number, userName: string, time: number) {

@@ -1,26 +1,14 @@
-class Team {
-  public score: number;
-  public name: string;
-
-  constructor(name: string) {
-    this.score = 0;
-    this.name = name;
-  }
-
-  increaseScore() {
-    this.score += 1;
-  }
-
-  resetScore() {
-    this.score = 0;
-  }
-}
+import type { Team } from './classes/Team';
 
 class GameState {
   public teams!: Team[];
 
   constructor() {
-    this.teams = [new Team('Team 1'), new Team('Team 2')];
+    this.teams = [];
+  }
+
+  addTeam(team: Team) {
+    this.teams.push(team);
   }
 }
 
