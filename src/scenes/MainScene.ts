@@ -9,6 +9,7 @@ import type { Actor } from '../classes/Actor.ts';
 import { Team } from '../classes/Team.ts';
 // import type { ScoreScene } from './ScoreScene.ts';
 import gameState from '../state.ts';
+import { GoalArea } from '../classes/GoalArea.ts';
 
 export class MainScene extends Phaser.Scene {
   // protected gameState!: GameState;
@@ -50,7 +51,7 @@ export class MainScene extends Phaser.Scene {
 
     this.load.image('ball', './assets/ball.png');
     this.load.image('game-field', './assets/game-field.png');
-    this.load.image('goal-area', './assets/goal-area.png');
+    // this.load.image('goal-area', './assets/goal-area.png');
     this.load.image('attack', './assets/attack.png');
   }
 
@@ -77,16 +78,16 @@ export class MainScene extends Phaser.Scene {
     this.createAds();
 
     // goal areas
-    const goalAreaLeftX = fieldLeftX + constants.goalAreaOffset;
+    // const goalAreaLeftX = fieldLeftX + constants.goalAreaOffset;
     // const goalAreaLeft = this.physics.add.sprite(goalAreaLeftX, fieldCenterY, 'goal-area');
 
-    const goalAreaRightX = fieldLeftX + fieldRightX - constants.goalAreaOffset;
+    // const goalAreaRightX = fieldLeftX + fieldRightX - constants.goalAreaOffset;
     // const goalAreaRight = this.physics.add.sprite(goalAreaRightX, fieldCenterY, 'goal-area');
 
     // ворота в обратном порядке чтобы соответствовало номерам команд
     // типа команда 0 левая а забить надо в ворота 0 правые
     // this.goalAreas = [goalAreaRight, goalAreaLeft];
-    this.goalAreas = [];
+    // this.goalAreas = [];
 
     // ball
     this.ball = new Ball(this, fieldCenterX, fieldCenterY, 'ball');
@@ -97,11 +98,13 @@ export class MainScene extends Phaser.Scene {
     // команды
     this.createTeams();
 
+    // ворота
+    this.createGoalAreas();
+
     // collision logic
     this.setColliders();
 
     // score logic
-    // (this.scene.get('ScoreScene') as ScoreScene).setGameState(this.gameState);
     this.scene.launch('ScoreScene');
 
     // pause logic
@@ -197,6 +200,15 @@ export class MainScene extends Phaser.Scene {
     const team2 = new Team('Team 2');
     team2.addPlayer(this.bot);
     gameState.addTeam(team2);
+  }
+
+  createGoalAreas() {
+    const goalAreaLeft = new GoalArea(88, 300 - 56, 32, 56 * 2 /*this*/);
+    const goalAreaRight = new GoalArea(800 - 88 - 32, 300 - 56, 32, 56 * 2 /*this*/);
+    goalAreaRight.setOpposingTeam(gameState.teams[0]);
+    goalAreaLeft.setOpposingTeam(gameState.teams[1]);
+    gameState.addGoalArea(goalAreaLeft);
+    gameState.addGoalArea(goalAreaRight);
   }
 
   setColliders() {
