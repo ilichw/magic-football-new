@@ -4,10 +4,9 @@ import type { Team } from './classes/Team';
 class GameState {
   public teams: Team[] = [];
   public goalAreas: GoalArea[] = [];
+  public field!: Phaser.Geom.Rectangle;
 
-  constructor() {
-    // this.teams = [];
-  }
+  constructor() {}
 
   addTeam(team: Team) {
     this.teams.push(team);
@@ -15,6 +14,10 @@ class GameState {
 
   addGoalArea(goalArea: GoalArea) {
     this.goalAreas.push(goalArea);
+  }
+
+  addField(field: Phaser.Geom.Rectangle) {
+    this.field = field;
   }
 }
 

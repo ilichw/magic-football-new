@@ -1,9 +1,17 @@
 export const constants = {
+  // настройки экрана
   screenWidth: 800,
   screenHeight: 600,
-  fieldWidth: 640,
-  fieldHeight: 480,
-  goalAreaOffset: 20,
+
+  // настройки карты
+  mapWidth: 640,
+  mapHeight: 480,
+  tileSize: 8,
+
+  // настройки ворот
+  goalAreaOffset: 8, // один тайл карты
+  goalAreaWidth: 32, // 4 тайла
+  goalAreaHeight: 112, // 7 + 7 тайлов
 };
 
 export const initials = {

@@ -1,25 +1,20 @@
 import type { Team } from './Team';
 
-export class GoalArea {
-  public x: number;
-  public y: number;
-  public width: number;
-  public height: number;
+export class GoalArea extends Phaser.Geom.Rectangle {
   public homeTeam!: Team;
   public opposingTeam!: Team;
 
-  constructor(x: number, y: number, width: number, height: number /*scene: Phaser.Scene*/) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-
-    // const g = scene.add.graphics();
-    // g.fillStyle(0x00ff00, 1); // цвет и альфа
-    // g.fillRect(x, y, width, height);
+  constructor(x: number, y: number, width: number, height: number) {
+    super(x, y, width, height);
   }
 
-  setOpposingTeam(team: Team) {
-    this.opposingTeam = team;
+  setTeams(homeTeam: Team, opposingTeam: Team) {
+    this.homeTeam = homeTeam;
+    this.opposingTeam = opposingTeam;
+  }
+
+  checkObjectInside(x: number, y: number, width: number, height: number) {
+    const objectRect = new Phaser.Geom.Rectangle(x, y, width, height);
+    return Phaser.Geom.Rectangle.Overlaps(this, objectRect);
   }
 }

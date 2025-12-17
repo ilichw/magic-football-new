@@ -5,15 +5,11 @@ import { handleBallCollision } from '../functions/handleBallCollision.ts';
 import { constants, initials } from '../config.ts';
 import { Attack } from '../classes/Attack.ts';
 import type { Actor } from '../classes/Actor.ts';
-// import { GameState } from '../classes/GameState.ts';
 import { Team } from '../classes/Team.ts';
-// import type { ScoreScene } from './ScoreScene.ts';
 import gameState from '../state.ts';
 import { GoalArea } from '../classes/GoalArea.ts';
 
 export class MainScene extends Phaser.Scene {
-  // protected gameState!: GameState;
-
   protected goal!: boolean;
   protected goalTriggerCooldown = 100;
   protected goalTriggerTime!: number;
@@ -22,7 +18,7 @@ export class MainScene extends Phaser.Scene {
   protected player!: Player;
   protected bot!: AIPlayer;
 
-  protected goalAreas!: Phaser.Physics.Arcade.Sprite[];
+  // protected goalAreas!: Phaser.Physics.Arcade.Sprite[]; перенос в gameState
   protected attacks: Attack[] = [];
   protected players!: Actor[];
 
@@ -36,6 +32,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   preload() {
+    // animations
     this.load.spritesheet('player', './assets/player_spritesheet.png', {
       frameWidth: 32,
       frameHeight: 32,
@@ -45,55 +42,45 @@ export class MainScene extends Phaser.Scene {
       frameHeight: 32,
     });
 
+    // images
+    this.load.image('ball', './assets/ball.png');
+    this.load.image('game-field', './assets/game-field.png');
+    this.load.image('attack', './assets/attack.png');
+
     // map
     this.load.image('tiles', './assets/field_tileset.png');
     this.load.tilemapTiledJSON('field', './assets/magic-football-field.json');
-
-    this.load.image('ball', './assets/ball.png');
-    this.load.image('game-field', './assets/game-field.png');
-    // this.load.image('goal-area', './assets/goal-area.png');
-    this.load.image('attack', './assets/attack.png');
   }
 
   create() {
-    // инициализация менеджера состояния игры
-    // (nafig)
-    // this.gameState = new GameState();
-
+    // при создании сцены обнуляем флаг гола
     this.goal = false;
 
-    // определение границ игрового мира
-    const fieldLeftX = (constants.screenWidth - constants.fieldWidth) / 2;
-    const fieldLeftY = (constants.screenHeight - constants.fieldHeight) / 2;
-    const fieldRightX = constants.screenWidth - fieldLeftX * 2;
-    const fieldRightY = constants.screenHeight - fieldLeftY * 2;
-    const fieldCenterX = constants.screenWidth / 2;
-    const fieldCenterY = constants.screenHeight / 2;
+    // игровое поле
+    const mapX = (constants.screenWidth - constants.mapWidth) / 2;
+    const mapY = (constants.screenHeight - constants.mapHeight) / 2;
+    const gameFieldX = mapX + constants.tileSize;
+    const gameFieldY = mapY + constants.tileSize;
+    const gameFieldWidth = constants.mapWidth - constants.tileSize * 2;
+    const gameFieldHeight = constants.mapHeight - constants.tileSize * 2;
 
-    // game field
-    this.physics.add.image(fieldCenterX, fieldCenterY, 'game-field');
-    this.initMap(fieldLeftX, fieldLeftY);
+    const gameField = new Phaser.Geom.Rectangle(gameFieldX, gameFieldY, gameFieldWidth, gameFieldHeight);
+    gameState.addField(gameField);
+
+    // фон
+    this.physics.add.image(gameState.field.centerX, gameState.field.centerY, 'game-field');
+
+    // карта
+    this.initMap(mapX, mapY);
 
     // ads
     this.createAds();
 
-    // goal areas
-    // const goalAreaLeftX = fieldLeftX + constants.goalAreaOffset;
-    // const goalAreaLeft = this.physics.add.sprite(goalAreaLeftX, fieldCenterY, 'goal-area');
-
-    // const goalAreaRightX = fieldLeftX + fieldRightX - constants.goalAreaOffset;
-    // const goalAreaRight = this.physics.add.sprite(goalAreaRightX, fieldCenterY, 'goal-area');
-
-    // ворота в обратном порядке чтобы соответствовало номерам команд
-    // типа команда 0 левая а забить надо в ворота 0 правые
-    // this.goalAreas = [goalAreaRight, goalAreaLeft];
-    // this.goalAreas = [];
-
     // ball
-    this.ball = new Ball(this, fieldCenterX, fieldCenterY, 'ball');
+    this.ball = new Ball(this, gameState.field.centerX, gameState.field.centerY, 'ball');
 
     // players
-    this.createPlayers(fieldCenterY, fieldCenterY);
+    this.createPlayers(gameState.field.centerY, gameState.field.centerY);
 
     // команды
     this.createTeams();
@@ -115,6 +102,9 @@ export class MainScene extends Phaser.Scene {
 
     // логика удаления атаки + получения урона игрока
     this.events.on('userHit', this.handleUserHit, this);
+
+    // логика забивания гола
+    this.events.once('goal', this.handleGoal, this);
   }
 
   update(time: number, delta: number) {
@@ -124,52 +114,48 @@ export class MainScene extends Phaser.Scene {
     // update sprites
     this.ball.update();
 
+    // обновления для игроков
     this.players.forEach((player) => {
       player.update(time, delta);
     });
 
+    // обновления для атак
     this.attacks.forEach((attack) => {
       attack.update(time, delta);
     });
   }
 
   checkGoal(time: number) {
-    // получить текущие координаты мяча на поле
-    const bounds = this.ball.getBounds();
+    gameState.goalAreas.forEach((goalArea) => {
+      // получить текущие координаты мяча на поле
+      const bounds = this.ball.getBounds();
 
-    // получить тайлы с которыми пересекается спрайт мяча
-    const tiles = this.goalLayer.getTilesWithinWorldXY(bounds.x, bounds.y, bounds.width, bounds.height);
-
-    for (let tile of tiles) {
-      if (this.goal) {
-        // событие мяч в воротах триггерится с задержкой так задумано
-        if (time - this.goalTriggerTime >= this.goalTriggerCooldown) {
-          this.handleTriggerTile(tile, this.ball);
-        } else break; // чтобы не срабатывало повторное определение гола когда мяч в воротах
+      // проверить находится ли мяч внутри ворот
+      if (goalArea.checkObjectInside(bounds.x, bounds.y, bounds.width, bounds.height)) {
+        this.events.emit('goal', goalArea);
       }
-
-      // а это зачем ладно посмотрим
-      if (!tile) continue;
-
-      if (tile.properties && tile.properties.trigger === true) {
-        // флаг что гол забит
-        this.goal = true;
-        this.goalTriggerTime = time;
-      }
-    }
+    });
   }
 
-  handleTriggerTile(goalArea: any, ball: Ball) {
-    // console.log(goalArea);
+  handleGoal(goalArea: GoalArea) {
+    // увеличить счет забившей команды
+    goalArea.opposingTeam.increaseScore();
+
+    // остановить текущую (главную) сцену
     this.scene.pause();
+
+    // обновить сцену отображения счета
+    this.scene.get('ScoreScene').events.emit('updateScore');
+
+    // запуск экрана "гооооооооооооол"
     this.scene.launch('GoalScene');
   }
 
   initMap(x: number, y: number) {
     this.map = this.make.tilemap({
       key: 'field',
-      tileHeight: 8,
-      tileWidth: 8,
+      tileHeight: constants.tileSize,
+      tileWidth: constants.tileSize,
     });
 
     // привязать набор тайлов к карте
@@ -188,7 +174,7 @@ export class MainScene extends Phaser.Scene {
   createPlayers(y1: number, y2: number) {
     this.player = new Player(this, initials.playerX, y1, 'player', 'player 1');
     this.bot = new AIPlayer(this, initials.botX, y2, 'bot', 'player 2');
-    // this.bot.addObjectToFollow(this.ball);
+    this.bot.addObjectToFollow(this.ball);
     this.players = [this.player, this.bot];
   }
 
@@ -203,10 +189,23 @@ export class MainScene extends Phaser.Scene {
   }
 
   createGoalAreas() {
-    const goalAreaLeft = new GoalArea(88, 300 - 56, 32, 56 * 2 /*this*/);
-    const goalAreaRight = new GoalArea(800 - 88 - 32, 300 - 56, 32, 56 * 2 /*this*/);
-    goalAreaRight.setOpposingTeam(gameState.teams[0]);
-    goalAreaLeft.setOpposingTeam(gameState.teams[1]);
+    const goalAreaY = gameState.field.centerY - constants.goalAreaHeight / 2;
+    const goalAreaLeft = new GoalArea(
+      gameState.field.left, // x
+      goalAreaY, // y
+      constants.goalAreaWidth, // width
+      constants.goalAreaHeight // height
+    );
+    const goalAreaRight = new GoalArea(
+      gameState.field.right - constants.goalAreaWidth,
+      goalAreaY,
+      constants.goalAreaWidth,
+      constants.goalAreaHeight
+    );
+
+    goalAreaLeft.setTeams(gameState.teams[0], gameState.teams[1]);
+    goalAreaRight.setTeams(gameState.teams[1], gameState.teams[0]);
+
     gameState.addGoalArea(goalAreaLeft);
     gameState.addGoalArea(goalAreaRight);
   }
@@ -264,13 +263,6 @@ export class MainScene extends Phaser.Scene {
     this.add.text(20, 570, 'PHASER', { color: 'yellow', backgroundColor: 'green' });
     this.add.text(150, 570, 'TypeScript', { color: 'red', fontStyle: 'italic' });
     this.add.text(300, 570, 'Any Sponsor');
-  }
-
-  handleGoal(goalIndex: number) {
-    gameState.teams[goalIndex].increaseScore();
-    this.scene.get('ScoreScene').events.emit('updateScore');
-    this.scene.pause();
-    this.scene.launch('GoalScene');
   }
 
   handlePauseKeyPress(event: KeyboardEvent) {
