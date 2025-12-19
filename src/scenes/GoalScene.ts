@@ -1,3 +1,5 @@
+import gameState from '../state';
+
 export class GoalScene extends Phaser.Scene {
   constructor() {
     super({ key: 'GoalScene' });
@@ -17,7 +19,8 @@ export class GoalScene extends Phaser.Scene {
     this.input.keyboard!.once('keydown-P', (event: KeyboardEvent) => {
       event.preventDefault();
       this.scene.stop();
-      this.scene.launch('MainScene');
+      gameState.refresh();
+      this.scene.resume('MainScene');
     });
   }
 }

@@ -1,16 +1,16 @@
-import type { Actor } from './Actor';
+import type { Player } from './Player';
 
 export class Team {
   public score = 0;
   public name: string;
-  public players: Actor[] = [];
+  public players: Player[] = [];
 
   constructor(name: string) {
     this.score = 0;
     this.name = name;
   }
 
-  addPlayer(player: Actor) {
+  addPlayer(player: Player) {
     this.players.push(player);
   }
 

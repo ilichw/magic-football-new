@@ -1,29 +1,23 @@
 import { AIPlayer } from '../classes/AIPlayer.ts';
 import { Ball } from '../classes/Ball.ts';
-import { Player } from '../classes/Player.ts';
+import { UIPlayer } from '../classes/UIPlayer.ts';
 import { handleBallCollision } from '../functions/handleBallCollision.ts';
 import { constants, initials } from '../config.ts';
 import { Attack } from '../classes/Attack.ts';
-import type { Actor } from '../classes/Actor.ts';
 import { Team } from '../classes/Team.ts';
 import gameState from '../state.ts';
 import { GoalArea } from '../classes/GoalArea.ts';
+import { GameField } from '../classes/GameField.ts';
 
 export class MainScene extends Phaser.Scene {
-  protected goal!: boolean;
-  protected goalTriggerCooldown = 100;
-  protected goalTriggerTime!: number;
+  // protected goal!: boolean;
+  // protected goalTriggerCooldown = 100;
+  // protected goalTriggerTime!: number;
 
-  protected ball!: Ball;
-  protected player!: Player;
-  protected bot!: AIPlayer;
+  // protected ball!: Ball;
 
-  // protected goalAreas!: Phaser.Physics.Arcade.Sprite[]; перенос в gameState
   protected attacks: Attack[] = [];
-  protected players!: Actor[];
 
-  protected map!: Phaser.Tilemaps.Tilemap;
-  protected tileset!: Phaser.Tilemaps.Tileset;
   protected boundLayer!: Phaser.Tilemaps.TilemapLayer;
   protected goalLayer!: Phaser.Tilemaps.TilemapLayer;
 
@@ -54,46 +48,31 @@ export class MainScene extends Phaser.Scene {
 
   create() {
     // при создании сцены обнуляем флаг гола
-    this.goal = false;
+    // this.goal = false;
 
     // игровое поле
     const mapX = (constants.screenWidth - constants.mapWidth) / 2;
     const mapY = (constants.screenHeight - constants.mapHeight) / 2;
-    const gameFieldX = mapX + constants.tileSize;
-    const gameFieldY = mapY + constants.tileSize;
-    const gameFieldWidth = constants.mapWidth - constants.tileSize * 2;
-    const gameFieldHeight = constants.mapHeight - constants.tileSize * 2;
+    const fieldX = mapX + constants.tileSize;
+    const fieldY = mapY + constants.tileSize;
+    const fieldWidth = constants.mapWidth - constants.tileSize * 2;
+    const fieldHeight = constants.mapHeight - constants.tileSize * 2;
 
-    const gameField = new Phaser.Geom.Rectangle(gameFieldX, gameFieldY, gameFieldWidth, gameFieldHeight);
-    gameState.addField(gameField);
+    const field = new GameField(fieldX, fieldY, fieldWidth, fieldHeight);
+    field.addScene(this);
+    field.initBackground('game-field'); // фон
+    gameState.setField(field);
 
-    // фон
-    this.physics.add.image(gameState.field.centerX, gameState.field.centerY, 'game-field');
-
-    // карта
     this.initMap(mapX, mapY);
-
-    // ads
     this.createAds();
-
-    // ball
-    this.ball = new Ball(this, gameState.field.centerX, gameState.field.centerY, 'ball');
-
-    // players
+    this.createBall(gameState.field.centerX, gameState.field.centerY);
     this.createPlayers(gameState.field.centerY, gameState.field.centerY);
-
-    // команды
     this.createTeams();
-
-    // ворота
     this.createGoalAreas();
-
-    // collision logic
     this.setColliders();
+    this.scene.launch('ScoreScene'); // отображение счета
 
-    // score logic
-    this.scene.launch('ScoreScene');
-
+    // --- СОБЫТИЯ ---
     // pause logic
     this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
 
@@ -104,7 +83,7 @@ export class MainScene extends Phaser.Scene {
     this.events.on('userHit', this.handleUserHit, this);
 
     // логика забивания гола
-    this.events.once('goal', this.handleGoal, this);
+    this.events.on('goal', this.handleGoal, this);
   }
 
   update(time: number, delta: number) {
@@ -112,10 +91,10 @@ export class MainScene extends Phaser.Scene {
     this.checkGoal(time);
 
     // update sprites
-    this.ball.update();
+    gameState.ball.update();
 
     // обновления для игроков
-    this.players.forEach((player) => {
+    gameState.players.forEach((player) => {
       player.update(time, delta);
     });
 
@@ -128,7 +107,7 @@ export class MainScene extends Phaser.Scene {
   checkGoal(time: number) {
     gameState.goalAreas.forEach((goalArea) => {
       // получить текущие координаты мяча на поле
-      const bounds = this.ball.getBounds();
+      const bounds = gameState.ball.getBounds();
 
       // проверить находится ли мяч внутри ворот
       if (goalArea.checkObjectInside(bounds.x, bounds.y, bounds.width, bounds.height)) {
@@ -152,39 +131,47 @@ export class MainScene extends Phaser.Scene {
   }
 
   initMap(x: number, y: number) {
-    this.map = this.make.tilemap({
+    const map = this.make.tilemap({
       key: 'field',
       tileHeight: constants.tileSize,
       tileWidth: constants.tileSize,
     });
 
     // привязать набор тайлов к карте
-    this.tileset = this.map.addTilesetImage('field_tileset', 'tiles') as Phaser.Tilemaps.Tileset;
+    const tileset = map.addTilesetImage('field_tileset', 'tiles') as Phaser.Tilemaps.Tileset;
 
     // загрузить слои карты
-    this.boundLayer = this.map.createLayer('bounds', this.tileset, x, y) as Phaser.Tilemaps.TilemapLayer;
-    this.goalLayer = this.map.createLayer('goal-areas', this.tileset, x, y) as Phaser.Tilemaps.TilemapLayer;
+    this.boundLayer = map.createLayer('bounds', tileset, x, y) as Phaser.Tilemaps.TilemapLayer;
+    this.goalLayer = map.createLayer('goal-areas', tileset, x, y) as Phaser.Tilemaps.TilemapLayer;
 
+    // обозначить границы мира
     this.physics.world.setBounds(x, y, this.boundLayer.width, this.boundLayer.height);
 
-    // console.log(this.boundLayer);
+    // столкновение с границами поля
     this.boundLayer.setCollisionByProperty({ collide: true });
   }
 
+  createBall(x: number, y: number) {
+    const ball = new Ball(this, x, y, 'ball');
+    gameState.addBall(ball);
+  }
+
   createPlayers(y1: number, y2: number) {
-    this.player = new Player(this, initials.playerX, y1, 'player', 'player 1');
-    this.bot = new AIPlayer(this, initials.botX, y2, 'bot', 'player 2');
-    this.bot.addObjectToFollow(this.ball);
-    this.players = [this.player, this.bot];
+    const player = new UIPlayer(this, initials.playerX, y1, 'player', 'player 1');
+    gameState.addPlayer(player);
+
+    const bot = new AIPlayer(this, initials.botX, y2, 'bot', 'player 2');
+    bot.addObjectToFollow(gameState.ball);
+    gameState.addPlayer(bot);
   }
 
   createTeams() {
     const team1 = new Team('Team 1');
-    team1.addPlayer(this.player);
+    team1.addPlayer(gameState.players[0]);
     gameState.addTeam(team1);
 
     const team2 = new Team('Team 2');
-    team2.addPlayer(this.bot);
+    team2.addPlayer(gameState.players[1]);
     gameState.addTeam(team2);
   }
 
@@ -211,19 +198,19 @@ export class MainScene extends Phaser.Scene {
   }
 
   setColliders() {
-    this.ball.setBounce(0.9);
-    this.physics.add.collider(this.ball, this.boundLayer);
+    gameState.ball.setBounce(0.9);
+    this.physics.add.collider(gameState.ball, this.boundLayer);
 
-    this.players.forEach((player) => {
+    gameState.players.forEach((player) => {
       player.setBounce(0.6);
       this.physics.add.collider(player, this.boundLayer);
     });
 
-    this.physics.add.collider(this.ball, this.boundLayer);
+    this.physics.add.collider(gameState.ball, this.boundLayer);
 
-    // collisions with ball
-    this.physics.add.collider(this.player, this.ball, handleBallCollision, undefined, this);
-    this.physics.add.collider(this.bot, this.ball, handleBallCollision, undefined, this);
+    gameState.players.forEach((player) => {
+      this.physics.add.collider(player, gameState.ball, handleBallCollision, undefined, this);
+    });
   }
 
   handleUserShoot(userX: number, userY: number, userName: string, time: number) {
@@ -239,7 +226,7 @@ export class MainScene extends Phaser.Scene {
 
     // логика добавления удаления атаки при попадании в игрока
     // + получения игроком урона
-    this.players
+    gameState.players
       .filter((player) => player.name !== userName)
       .forEach((player) => {
         this.physics.add.collider(player, attack, (player, attack: any) => {

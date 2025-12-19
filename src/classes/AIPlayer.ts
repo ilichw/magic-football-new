@@ -1,8 +1,8 @@
 import { initials } from '../config.ts';
-import { Actor } from './Actor.ts';
+import { Player } from './Player.ts';
 import type { Ball } from './Ball.ts';
 
-export class AIPlayer extends Actor {
+export class AIPlayer extends Player {
   private ball: Ball | null;
   private speed = initials.playerSpeed; // Скорость AI
 

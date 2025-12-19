@@ -1,62 +1,46 @@
-import { initials } from '../config.ts';
-import { Actor } from './Actor.ts';
+export class Player extends Phaser.Physics.Arcade.Sprite {
+  protected lastShoot = 0; // время крайней атаки
+  protected shootCooldown = 1500; // время перезарядки ms
+  protected initialX: number;
+  protected initialY: number;
 
-export class Player extends Actor {
-  private keyW: any;
-  private keyA: any;
-  private keyS: any;
-  private keyD: any;
-  private keySpace: any;
+  public name: string;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string) {
-    super(scene, x, y, texture, name);
+    // создание спрайта
+    super(scene, x, y, texture);
+    this.name = name; // проблема: как генерировать уникальный id в многопользовательских играх
 
-    // логика управления игрока
-    this.keyW = this.scene.input.keyboard!.addKey('W');
-    this.keyA = this.scene.input.keyboard!.addKey('A');
-    this.keyS = this.scene.input.keyboard!.addKey('S');
-    this.keyD = this.scene.input.keyboard!.addKey('D');
-    this.keySpace = this.scene.input.keyboard!.addKey(32);
+    // сохранить начальные позиции (
+    this.initialX = x;
+    this.initialY = y;
 
-    this.anims.create({
-      key: 'walk',
-      frames: this.anims.generateFrameNumbers('player', {
-        start: 0,
-        end: 3,
-      }),
-      frameRate: 6,
-    });
+    // добавление спрайта в сцену
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
   }
 
-  update(time: number, delta: number) {
-    // логика атаки игрока
-    if (this.keySpace.isDown) {
-      this.shoot(time);
+  // логика атаки
+  shoot(time: number) {
+    // атака происходит только если прошло время перезарядки
+    if (time - this.lastShoot >= this.shootCooldown) {
+      // console.log(`shoot! ${time}   x: ${this.x}`);
+
+      // срабатывание события атаки (слушается в сцене)
+      this.scene.events.emit('userShoots', this.x, this.y, this.name, time);
+
+      // обновление времени крайней атаки
+      this.lastShoot = time;
     }
+  }
 
-    // Логика движения игрока
-    let vx = 0,
-      vy = 0;
+  // логика получения урона
+  getDamage() {
+    console.log(`${this.name} gets damage`);
+  }
 
-    if (this.keyA.isDown) {
-      vx = -initials.playerSpeed;
-    } else if (this.keyD.isDown) {
-      vx = initials.playerSpeed;
-    }
-
-    if (this.keyW.isDown) {
-      vy = -initials.playerSpeed;
-    } else if (this.keyS.isDown) {
-      vy = initials.playerSpeed;
-    }
-
-    if (vx || vy) {
-      this.anims.play('walk', true); // Игрок начинает анимацию
-      this.setFlipX(vx < 0);
-    } else {
-      this.anims.stop();
-    }
-
-    this.setVelocity(vx, vy);
+  reset() {
+    this.x = this.initialX;
+    this.y = this.initialY;
   }
 }
