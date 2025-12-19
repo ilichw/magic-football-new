@@ -12,9 +12,11 @@ class GameState {
   public players: Player[] = [];
 
   constructor() {
+    // костыль чтобы не было ошибки в ScoreScene
     this.field = new GameField(0, 0, 0, 0);
   }
 
+  // оказывается я ее не использую
   init() {
     this.goalAreas = [];
     this.teams = [];
@@ -22,10 +24,9 @@ class GameState {
   }
 
   refresh() {
-    this.players.forEach((player) => {
-      player.reset();
+    [...this.players, ...this.goalAreas, this.ball].forEach((elem) => {
+      elem.reset();
     });
-    this.ball.reset();
   }
 
   // для меня так понятнее чем gameState.players.push()

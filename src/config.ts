@@ -12,6 +12,7 @@ export const constants = {
   goalAreaOffset: 8, // один тайл карты
   goalAreaWidth: 32, // 4 тайла
   goalAreaHeight: 112, // 7 + 7 тайлов
+  goalTriggerCooldown: 150, // время реагирования на гол, мс
 };
 
 export const initials = {

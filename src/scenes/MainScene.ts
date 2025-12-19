@@ -10,14 +10,7 @@ import { GoalArea } from '../classes/GoalArea.ts';
 import { GameField } from '../classes/GameField.ts';
 
 export class MainScene extends Phaser.Scene {
-  // protected goal!: boolean;
-  // protected goalTriggerCooldown = 100;
-  // protected goalTriggerTime!: number;
-
-  // protected ball!: Ball;
-
   protected attacks: Attack[] = [];
-
   protected boundLayer!: Phaser.Tilemaps.TilemapLayer;
   protected goalLayer!: Phaser.Tilemaps.TilemapLayer;
 
@@ -47,9 +40,6 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
-    // при создании сцены обнуляем флаг гола
-    // this.goal = false;
-
     // игровое поле
     const mapX = (constants.screenWidth - constants.mapWidth) / 2;
     const mapY = (constants.screenHeight - constants.mapHeight) / 2;
@@ -110,7 +100,13 @@ export class MainScene extends Phaser.Scene {
       const bounds = gameState.ball.getBounds();
 
       // проверить находится ли мяч внутри ворот
-      if (goalArea.checkObjectInside(bounds.x, bounds.y, bounds.width, bounds.height)) {
+      if (!goalArea.goal && goalArea.checkObjectInside(bounds.x, bounds.y, bounds.width, bounds.height)) {
+        goalArea.goal = true;
+        goalArea.goalTriggerTime = time;
+      }
+
+      // определение гола с задержкой для реалистичности
+      if (goalArea.goal && time - goalArea.goalTriggerTime >= constants.goalTriggerCooldown) {
         this.events.emit('goal', goalArea);
       }
     });
