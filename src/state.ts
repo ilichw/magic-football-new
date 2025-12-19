@@ -1,3 +1,4 @@
+import type { Attack } from './classes/Attack';
 import { Ball } from './classes/Ball';
 import { GameField } from './classes/GameField';
 import type { GoalArea } from './classes/GoalArea';
@@ -10,6 +11,7 @@ class GameState {
   public ball!: Ball;
   public teams: Team[] = [];
   public players: Player[] = [];
+  public attacks: Attack[] = [];
 
   constructor() {
     // костыль чтобы не было ошибки в ScoreScene

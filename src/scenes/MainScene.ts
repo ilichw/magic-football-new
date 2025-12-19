@@ -8,9 +8,9 @@ import { Team } from '../classes/Team.ts';
 import gameState from '../state.ts';
 import { GoalArea } from '../classes/GoalArea.ts';
 import { GameField } from '../classes/GameField.ts';
+import type { Player } from '../classes/Player.ts';
 
 export class MainScene extends Phaser.Scene {
-  protected attacks: Attack[] = [];
   protected boundLayer!: Phaser.Tilemaps.TilemapLayer;
   protected goalLayer!: Phaser.Tilemaps.TilemapLayer;
 
@@ -89,7 +89,7 @@ export class MainScene extends Phaser.Scene {
     });
 
     // обновления для атак
-    this.attacks.forEach((attack) => {
+    gameState.attacks.forEach((attack) => {
       attack.update(time, delta);
     });
   }
@@ -212,30 +212,23 @@ export class MainScene extends Phaser.Scene {
   handleUserShoot(userX: number, userY: number, userName: string, time: number) {
     // логика создания новой атаки (спрайта)
     const attack = new Attack(this, userX, userY, 'attack', time);
-    this.attacks.push(attack);
+    gameState.attacks.push(attack);
 
-    attack.setCollideWorldBounds(true, 0, 0, true);
-
-    this.events.on('worldbounds', (attack: any) => {
-      attack.destroy();
-    });
-
-    // логика добавления удаления атаки при попадании в игрока
-    // + получения игроком урона
+    // логика попадания атаки в игрока
     gameState.players
       .filter((player) => player.name !== userName)
       .forEach((player) => {
         this.physics.add.collider(player, attack, (player, attack: any) => {
-          // player.getDamage()
-          this.events.emit('userHit', attack.creationTime);
+          this.events.emit('userHit', player, attack.creationTime);
         });
       });
   }
 
-  handleUserHit(time: number) {
-    console.log(time);
+  handleUserHit(player: Player, time: number) {
+    player.getDamage();
+
     // как находить атаку по id
-    this.attacks
+    gameState.attacks
       .filter((attack) => attack.creationTime === time)
       .forEach((attack) => {
         attack.destroy();
