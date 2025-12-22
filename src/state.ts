@@ -11,7 +11,7 @@ class GameState {
   public ball!: Ball;
   public teams: Team[] = [];
   public players: Player[] = [];
-  public attacks: Attack[] = [];
+  public attacks!: Phaser.GameObjects.Group;
 
   constructor() {
     // костыль чтобы не было ошибки в ScoreScene
@@ -50,6 +50,12 @@ class GameState {
 
   setField(field: GameField) {
     this.field = field;
+  }
+
+  destroyAttack(attack: Attack) {
+    attack.destroy();
+    // debug
+    // console.log(gameState.attacksGroup.getLength());
   }
 }
 

@@ -40,6 +40,9 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
+    const attacks = this.physics.add.group();
+    gameState.attacks = attacks;
+
     // игровое поле
     const mapX = (constants.screenWidth - constants.mapWidth) / 2;
     const mapY = (constants.screenHeight - constants.mapHeight) / 2;
@@ -74,6 +77,10 @@ export class MainScene extends Phaser.Scene {
 
     // логика забивания гола
     this.events.on('goal', this.handleGoal, this);
+
+    this.physics.world.on('worldbounds', (attack: Attack) => {
+      gameState.destroyAttack(attack);
+    });
   }
 
   update(time: number, delta: number) {
@@ -89,9 +96,13 @@ export class MainScene extends Phaser.Scene {
     });
 
     // обновления для атак
-    gameState.attacks.forEach((attack) => {
+    gameState.attacks.children.each((attack) => {
       attack.update(time, delta);
+      return null;
     });
+    // gameState.attacks.forEach((attack) => {
+    //   attack.update(time, delta);
+    // });
   }
 
   checkGoal(time: number) {
@@ -207,32 +218,31 @@ export class MainScene extends Phaser.Scene {
     gameState.players.forEach((player) => {
       this.physics.add.collider(player, gameState.ball, handleBallCollision, undefined, this);
     });
+
+    this.physics.add.collider(gameState.attacks, this.boundLayer);
+
+    gameState.players.forEach((player) => {
+      this.physics.add.collider(player, gameState.attacks, (player, attack: any) => {
+        this.events.emit('userHit', player, attack);
+      });
+    });
   }
 
   handleUserShoot(userX: number, userY: number, userName: string, time: number) {
     // логика создания новой атаки (спрайта)
-    const attack = new Attack(this, userX, userY, 'attack', time);
-    gameState.attacks.push(attack);
+    const attack = new Attack(this, userX, userY, 'attack', userName, time);
+    gameState.attacks.add(attack);
 
-    // логика попадания атаки в игрока
-    gameState.players
-      .filter((player) => player.name !== userName)
-      .forEach((player) => {
-        this.physics.add.collider(player, attack, (player, attack: any) => {
-          this.events.emit('userHit', player, attack.creationTime);
-        });
-      });
+    // debug
+    // console.log(gameState.attacks.getLength());
   }
 
-  handleUserHit(player: Player, time: number) {
-    player.getDamage();
-
-    // как находить атаку по id
-    gameState.attacks
-      .filter((attack) => attack.creationTime === time)
-      .forEach((attack) => {
-        attack.destroy();
-      });
+  // логика попадания атаки в игрока
+  handleUserHit(player: Player, attack: Attack) {
+    if (player.name !== attack.emitterName) {
+      player.getDamage();
+      gameState.destroyAttack(attack);
+    }
   }
 
   createAds() {
