@@ -219,13 +219,9 @@ export class MainScene extends Phaser.Scene {
       this.physics.add.collider(player, this.boundLayer);
     });
 
-    this.physics.add.collider(gameState.ball, this.boundLayer);
-
     gameState.players.forEach((player) => {
       this.physics.add.collider(player, gameState.ball, handleBallCollision, undefined, this);
     });
-
-    this.physics.add.collider(gameState.attacks, this.boundLayer);
 
     gameState.players.forEach((player) => {
       this.physics.add.collider(player, gameState.attacks, (player, attack: any) => {
@@ -238,9 +234,6 @@ export class MainScene extends Phaser.Scene {
     // логика создания новой атаки (спрайта)
     const attack = new Attack(this, userX, userY, 'attack', userName, time);
     gameState.attacks.add(attack);
-
-    // debug
-    // console.log(gameState.attacks.getLength());
   }
 
   // логика попадания атаки в игрока

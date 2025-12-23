@@ -54,8 +54,6 @@ class GameState {
 
   destroyAttack(attack: Attack) {
     attack.destroy();
-    // debug
-    // console.log(gameState.attacksGroup.getLength());
   }
 }
 
