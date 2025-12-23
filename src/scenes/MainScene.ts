@@ -233,15 +233,17 @@ export class MainScene extends Phaser.Scene {
 
   // логика попадания атаки в игрока
   handleUserHit(player: Player, attack: Attack) {
-    // проверяется попадание в любого игрока кроме инициатора атаки
     if (player.name !== attack.emitterName) {
+      // логика наложения эффекта
       player.addEffect(attack.effect.type);
 
+      // логика снятия эффекта
       this.time.addEvent({
-        delay: attack.effect.timeout,
+        delay: attack.effect.duration,
         callback: () => player.removeEffect(attack.effect.type),
       });
 
+      // логика удаления атаки
       gameState.destroyAttack(attack);
     }
   }

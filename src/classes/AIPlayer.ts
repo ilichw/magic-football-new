@@ -30,8 +30,8 @@ export class AIPlayer extends Player {
   update() {
     if (this.ball === null) return;
 
-    let vx = 0,
-      vy = 0;
+    let vx = 0;
+    let vy = 0;
 
     // Логика движения AI к мячу
     const distance = Phaser.Math.Distance.Between(this.x, this.y, this.ball.x, this.ball.y);

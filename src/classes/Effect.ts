@@ -4,10 +4,10 @@ export enum EffectType {
 
 export class Effect {
   type: EffectType;
-  timeout: number;
+  duration: number;
 
-  constructor(type: EffectType, timeout: number) {
+  constructor(type: EffectType, duration: number) {
     this.type = type;
-    this.timeout = timeout;
+    this.duration = duration;
   }
 }

@@ -23,8 +23,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
   }
 
-  // update(time: number, delta: number) {}
-
   // логика атаки
   shoot(time: number) {
     // атака происходит только если прошло время перезарядки
@@ -49,11 +47,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (effectType === EffectType.Slowdown) {
       this.slowdown = false;
     }
-  }
-
-  // логика получения урона
-  getDamage() {
-    console.log(`${this.name} gets damage`);
   }
 
   reset() {

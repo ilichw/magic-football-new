@@ -29,16 +29,14 @@ export class UIPlayer extends Player {
   }
 
   update(time: number, delta: number) {
-    // super.update(time, delta);
-
     // логика атаки игрока
     if (this.keySpace.isDown) {
       this.shoot(time);
     }
 
     // Логика движения игрока
-    let vx = 0,
-      vy = 0;
+    let vx = 0;
+    let vy = 0;
 
     if (this.keyA.isDown) {
       vx = -initials.playerSpeed;
