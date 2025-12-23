@@ -1,8 +1,11 @@
+import { EffectType, type Effect } from './Effect';
+
 export class Player extends Phaser.Physics.Arcade.Sprite {
   protected lastShoot = 0; // время крайней атаки
   protected shootCooldown = 1500; // время перезарядки ms
   protected initialX: number;
   protected initialY: number;
+  protected slowdown = false;
 
   public name: string;
 
@@ -20,17 +23,31 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
   }
 
+  // update(time: number, delta: number) {}
+
   // логика атаки
   shoot(time: number) {
     // атака происходит только если прошло время перезарядки
     if (time - this.lastShoot >= this.shootCooldown) {
-      // console.log(`shoot! ${time}   x: ${this.x}`);
-
       // срабатывание события атаки (слушается в сцене)
       this.scene.events.emit('userShoots', this.x, this.y, this.name, time);
 
       // обновление времени крайней атаки
       this.lastShoot = time;
+    }
+  }
+
+  // логика наложения эффекта
+  addEffect(effectType: EffectType) {
+    if (effectType === EffectType.Slowdown) {
+      this.slowdown = true;
+    }
+  }
+
+  // логика снятия эффекта
+  removeEffect(effectType: EffectType) {
+    if (effectType === EffectType.Slowdown) {
+      this.slowdown = false;
     }
   }
 

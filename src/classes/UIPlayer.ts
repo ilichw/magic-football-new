@@ -29,6 +29,8 @@ export class UIPlayer extends Player {
   }
 
   update(time: number, delta: number) {
+    // super.update(time, delta);
+
     // логика атаки игрока
     if (this.keySpace.isDown) {
       this.shoot(time);
@@ -55,6 +57,11 @@ export class UIPlayer extends Player {
       this.setFlipX(vx < 0);
     } else {
       this.anims.stop();
+    }
+
+    if (this.slowdown) {
+      vx /= 2;
+      vy /= 2;
     }
 
     this.setVelocity(vx, vy);

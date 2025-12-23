@@ -52,6 +52,11 @@ export class AIPlayer extends Player {
       this.anims.stop();
     }
 
+    if (this.slowdown) {
+      vx /= 2;
+      vy /= 2;
+    }
+
     this.setVelocity(vx, vy);
   }
 }

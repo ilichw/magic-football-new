@@ -1,9 +1,10 @@
 import gameState from '../state';
-import type { Player } from './Player';
+import type { Effect } from './Effect';
 
 export class Attack extends Phaser.Physics.Arcade.Sprite {
   public creationTime: number;
   public emitterName: string;
+  public effect: Effect;
 
   constructor(
     scene: Phaser.Scene,
@@ -11,12 +12,14 @@ export class Attack extends Phaser.Physics.Arcade.Sprite {
     y: number,
     texture: string,
     emitterName: string, // имя игрока который стрелял
-    creationTime: number
+    creationTime: number,
+    effect: Effect
   ) {
     // создание спрайта
     super(scene, x, y, texture);
     this.creationTime = creationTime; // время создания используется как id
     this.emitterName = emitterName;
+    this.effect = effect;
 
     // добавление спрайта в сцену
     scene.add.existing(this);

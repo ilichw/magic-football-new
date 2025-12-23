@@ -9,6 +9,7 @@ import gameState from '../state.ts';
 import { GoalArea } from '../classes/GoalArea.ts';
 import { GameField } from '../classes/GameField.ts';
 import type { Player } from '../classes/Player.ts';
+import { Effect, EffectType } from '../classes/Effect.ts';
 
 export class MainScene extends Phaser.Scene {
   protected boundLayer!: Phaser.Tilemaps.TilemapLayer;
@@ -225,14 +226,22 @@ export class MainScene extends Phaser.Scene {
 
   handleUserShoot(userX: number, userY: number, userName: string, time: number) {
     // логика создания новой атаки (спрайта)
-    const attack = new Attack(this, userX, userY, 'attack', userName, time);
+    const effect = new Effect(EffectType.Slowdown, 5000);
+    const attack = new Attack(this, userX, userY, 'attack', userName, time, effect);
     gameState.attacks.add(attack);
   }
 
   // логика попадания атаки в игрока
   handleUserHit(player: Player, attack: Attack) {
+    // проверяется попадание в любого игрока кроме инициатора атаки
     if (player.name !== attack.emitterName) {
-      player.getDamage();
+      player.addEffect(attack.effect.type);
+
+      this.time.addEvent({
+        delay: attack.effect.timeout,
+        callback: () => player.removeEffect(attack.effect.type),
+      });
+
       gameState.destroyAttack(attack);
     }
   }
