@@ -83,6 +83,15 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
+  shutdown() {
+    // отключение обработчиков событий
+    this.input.keyboard!.off('keydown-P', this.handlePauseKeyPress, this);
+    this.events.off('userShoots', this.handleUserShoot, this);
+    this.events.off('userHit', this.handleUserHit, this);
+    this.events.off('goal', this.handleGoal, this);
+    this.physics.world.off('worldbounds');
+  }
+
   update(time: number, delta: number) {
     // check goal logic
     this.checkGoal(time);
@@ -100,9 +109,6 @@ export class MainScene extends Phaser.Scene {
       attack.update(time, delta);
       return null;
     });
-    // gameState.attacks.forEach((attack) => {
-    //   attack.update(time, delta);
-    // });
   }
 
   checkGoal(time: number) {
