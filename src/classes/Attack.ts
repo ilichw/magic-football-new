@@ -1,3 +1,4 @@
+import gameState from '../state';
 import type { Player } from './Player';
 
 export class Attack extends Phaser.Physics.Arcade.Sprite {
@@ -32,5 +33,13 @@ export class Attack extends Phaser.Physics.Arcade.Sprite {
     const speed = 500; // px/сек
     const distance = speed * (delta / 1000); // px, т.к. delta в ms
     this.x += distance;
+
+    // логика унчтожения спрайта при достижении границ поля
+    const isOutLeft = this.x < gameState.field.left;
+    const isOutRight = this.x > gameState.field.right;
+
+    if (isOutLeft || isOutRight) {
+      this.destroy();
+    }
   }
 }

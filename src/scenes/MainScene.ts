@@ -77,10 +77,6 @@ export class MainScene extends Phaser.Scene {
 
     // логика забивания гола
     this.events.on('goal', this.handleGoal, this);
-
-    this.physics.world.on('worldbounds', (attack: Attack) => {
-      gameState.destroyAttack(attack);
-    });
   }
 
   shutdown() {
@@ -89,7 +85,6 @@ export class MainScene extends Phaser.Scene {
     this.events.off('userShoots', this.handleUserShoot, this);
     this.events.off('userHit', this.handleUserHit, this);
     this.events.off('goal', this.handleGoal, this);
-    this.physics.world.off('worldbounds');
   }
 
   update(time: number, delta: number) {
@@ -215,15 +210,13 @@ export class MainScene extends Phaser.Scene {
     this.physics.add.collider(gameState.ball, this.boundLayer);
 
     gameState.players.forEach((player) => {
-      player.setBounce(0.6);
+      // для каждого игрока: столкновения с границами
       this.physics.add.collider(player, this.boundLayer);
-    });
 
-    gameState.players.forEach((player) => {
+      // логика столкновения с мячом
       this.physics.add.collider(player, gameState.ball, handleBallCollision, undefined, this);
-    });
 
-    gameState.players.forEach((player) => {
+      // логика столкновения с атакой
       this.physics.add.collider(player, gameState.attacks, (player, attack: any) => {
         this.events.emit('userHit', player, attack);
       });
