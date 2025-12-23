@@ -89,7 +89,7 @@ export class MainScene extends Phaser.Scene {
 
   update(time: number, delta: number) {
     // check goal logic
-    this.checkGoal(time);
+    this.detectGoal(time);
 
     // update sprites
     gameState.ball.update();
@@ -106,13 +106,13 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
-  checkGoal(time: number) {
+  detectGoal(time: number) {
     gameState.goalAreas.forEach((goalArea) => {
       // получить текущие координаты мяча на поле
       const bounds = gameState.ball.getBounds();
 
       // проверить находится ли мяч внутри ворот
-      if (!goalArea.goal && goalArea.checkObjectInside(bounds.x, bounds.y, bounds.width, bounds.height)) {
+      if (!goalArea.goal && goalArea.contains(bounds.centerX, bounds.centerY)) {
         goalArea.goal = true;
         goalArea.goalTriggerTime = time;
       }

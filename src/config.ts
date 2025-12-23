@@ -11,7 +11,7 @@ export const constants = {
   // настройки ворот
   goalAreaOffset: 8, // один тайл карты
   goalAreaWidth: 32, // 4 тайла
-  goalAreaHeight: 112, // 7 + 7 тайлов
+  goalAreaHeight: 112, // 7 + 7 тайлов 56+56
   goalTriggerCooldown: 150, // время реагирования на гол, мс
 };
 

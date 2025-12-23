@@ -18,9 +18,4 @@ export class GoalArea extends Phaser.Geom.Rectangle {
   reset() {
     this.goal = false;
   }
-
-  checkObjectInside(x: number, y: number, width: number, height: number) {
-    const objectRect = new Phaser.Geom.Rectangle(x, y, width, height);
-    return Phaser.Geom.Rectangle.Overlaps(this, objectRect);
-  }
 }
