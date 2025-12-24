@@ -5,6 +5,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   protected shootCooldown = 1500; // время перезарядки ms
   protected initialX: number;
   protected initialY: number;
+
+  protected speed = 200;
   protected slowdown = false;
 
   public name: string;

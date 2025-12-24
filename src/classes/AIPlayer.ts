@@ -1,10 +1,8 @@
-import { initials } from '../config.ts';
 import { Player } from './Player.ts';
 import type { Ball } from './Ball.ts';
 
 export class AIPlayer extends Player {
   private ball: Ball | null;
-  private speed = initials.playerSpeed; // Скорость AI
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, name: string) {
     super(scene, x, y, texture, name);
@@ -41,8 +39,6 @@ export class AIPlayer extends Player {
     if (distance < 300) {
       vx = Math.cos(angle) * this.speed;
       vy = Math.sin(angle) * this.speed;
-    } else {
-      vx = vy = 0;
     }
 
     if (vx || vy) {

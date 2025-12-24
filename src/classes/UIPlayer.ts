@@ -1,4 +1,3 @@
-import { initials } from '../config.ts';
 import { Player } from './Player.ts';
 
 export class UIPlayer extends Player {
@@ -39,15 +38,15 @@ export class UIPlayer extends Player {
     let vy = 0;
 
     if (this.keyA.isDown) {
-      vx = -initials.playerSpeed;
+      vx = -this.speed;
     } else if (this.keyD.isDown) {
-      vx = initials.playerSpeed;
+      vx = this.speed;
     }
 
     if (this.keyW.isDown) {
-      vy = -initials.playerSpeed;
+      vy = -this.speed;
     } else if (this.keyS.isDown) {
-      vy = initials.playerSpeed;
+      vy = this.speed;
     }
 
     if (vx || vy) {
