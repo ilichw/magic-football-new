@@ -30,7 +30,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // атака происходит только если прошло время перезарядки
     if (time - this.lastShoot >= this.shootCooldown) {
       // срабатывание события атаки (слушается в сцене)
-      this.scene.events.emit('userShoots', this.x, this.y, this.name, time);
+      this.scene.events.emit('userShoots', this, time);
 
       // обновление времени крайней атаки
       this.lastShoot = time;

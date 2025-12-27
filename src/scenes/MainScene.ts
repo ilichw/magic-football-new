@@ -171,6 +171,7 @@ export class MainScene extends Phaser.Scene {
 
     const bot = new AIPlayer(this, initials.botX, y2, 'bot', 'player 2');
     bot.addObjectToFollow(gameState.ball);
+    bot.addOpponent(player);
     gameState.addPlayer(bot);
   }
 
@@ -224,10 +225,17 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
-  handleUserShoot(userX: number, userY: number, userName: string, time: number) {
-    // логика создания новой атаки (спрайта)
+  handleUserShoot(user: Player, time: number) {
     const effect = new Effect(EffectType.Slowdown, 5000);
-    const attack = new Attack(this, userX, userY, 'attack', userName, time, effect);
+
+    // расчет скорости
+    let velocity = constants.attackVelocity;
+    if (user.flipX) velocity = -velocity;
+
+    // создание спрайта атаки
+    const attack = new Attack(this, user.x, user.y, 'attack', user.name, time, effect, velocity);
+
+    // добавление в группу
     gameState.attacks.add(attack);
   }
 

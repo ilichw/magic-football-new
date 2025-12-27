@@ -5,6 +5,7 @@ export class Attack extends Phaser.Physics.Arcade.Sprite {
   public creationTime: number;
   public emitterName: string;
   public effect: Effect;
+  private velocity: number;
 
   constructor(
     scene: Phaser.Scene,
@@ -13,13 +14,15 @@ export class Attack extends Phaser.Physics.Arcade.Sprite {
     texture: string,
     emitterName: string, // имя игрока который стрелял
     creationTime: number,
-    effect: Effect
+    effect: Effect,
+    velocity: number
   ) {
     // создание спрайта
     super(scene, x, y, texture);
     this.creationTime = creationTime; // время создания используется как id
     this.emitterName = emitterName;
     this.effect = effect;
+    this.velocity = velocity;
 
     // добавление спрайта в сцену
     scene.add.existing(this);
@@ -33,8 +36,7 @@ export class Attack extends Phaser.Physics.Arcade.Sprite {
 
   update(time: number, delta: number) {
     // логика движения спрайта атаки
-    const speed = 500; // px/сек
-    const distance = speed * (delta / 1000); // px, т.к. delta в ms
+    const distance = this.velocity * (delta / 1000); // px, т.к. delta в ms
     this.x += distance;
 
     // логика унчтожения спрайта при достижении границ поля

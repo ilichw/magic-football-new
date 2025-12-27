@@ -13,6 +13,9 @@ export const constants = {
   goalAreaWidth: 32, // 4 тайла
   goalAreaHeight: 112, // 7 + 7 тайлов 56+56
   goalTriggerCooldown: 150, // время реагирования на гол, мс
+
+  // настройк атаки
+  attackVelocity: 500, // px/sec
 };
 
 export const initials = {
