@@ -40,7 +40,15 @@ export class AIPlayer extends Player {
   attack(time: number) {
     if (this.opponent === null) return;
 
-    if (this.opponent.y === this.y) {
+    // получить границы спрайтов бота и оппонента
+    const thisBounds = this.getBounds();
+    const opponentBounds = this.opponent.getBounds();
+
+    // проверка пересечения оппонента и бота
+    const topCheck = thisBounds.top <= opponentBounds.top && opponentBounds.top <= thisBounds.bottom;
+    const bottomCheck = thisBounds.top <= opponentBounds.bottom && opponentBounds.bottom <= thisBounds.bottom;
+
+    if (topCheck || bottomCheck) {
       this.shoot(time);
     }
   }
