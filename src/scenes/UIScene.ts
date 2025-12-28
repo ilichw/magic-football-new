@@ -2,11 +2,11 @@ import Phaser from 'phaser';
 import gameState from '../state.ts';
 import { constants } from '../config.ts';
 
-export class ScoreScene extends Phaser.Scene {
+export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
 
   constructor() {
-    super({ key: 'ScoreScene', active: true });
+    super({ key: 'UIScene', active: true });
   }
 
   create() {
@@ -24,7 +24,7 @@ export class ScoreScene extends Phaser.Scene {
     event.preventDefault();
 
     this.scene
-      .get('PauseScene')
+      .get('FullscreenMessageScene')
       .events.emit('showMessage', constants.pauseMessage.title, constants.pauseMessage.message);
 
     this.scene.get('MainScene').events.emit('togglePause');

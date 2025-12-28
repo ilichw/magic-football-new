@@ -64,20 +64,11 @@ export class MainScene extends Phaser.Scene {
     this.createTeams();
     this.createGoalAreas();
     this.setColliders();
-    this.scene.launch('ScoreScene'); // отображение счета
-    this.scene.launch('PauseScene');
+    this.scene.launch('UIScene'); // отображение счета
+    this.scene.launch('FullscreenMessageScene');
 
     // --- СОБЫТИЯ ---
     // pause logic
-    // this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
-    // this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => {
-    // event.preventDefault();
-
-    // const isPaused = this.scene.isPaused('MainScene');
-    // isPaused ? this.scene.resume('MainScene') : this.scene.pause('MainScene');
-
-    // this.scene.get('PauseScene').events.emit('toggle');
-    // });
     this.events.on('togglePause', this.togglePause, this);
 
     // логика создания атаки
@@ -97,7 +88,6 @@ export class MainScene extends Phaser.Scene {
 
   shutdown() {
     // отключение обработчиков событий
-    // this.input.keyboard!.off('keydown-P', this.handlePauseKeyPress, this);
     this.events.on('togglePause', this.togglePause, this);
     this.events.off('userShoots', this.handleUserShoot, this);
     this.events.off('userHit', this.handleUserHit, this);
@@ -149,7 +139,7 @@ export class MainScene extends Phaser.Scene {
     this.scene.pause();
 
     // обновить сцену отображения счета
-    this.scene.get('ScoreScene').events.emit('updateScore');
+    this.scene.get('UIScene').events.emit('updateScore');
 
     // запуск экрана "гооооооооооооол"
     this.scene.launch('GoalScene');
@@ -281,6 +271,6 @@ export class MainScene extends Phaser.Scene {
   // handlePauseKeyPress(event: KeyboardEvent) {
   //   event.preventDefault();
   //   this.scene.pause();
-  //   this.scene.launch('PauseScene');
+  //   this.scene.launch('FullscreenMessageScene');
   // }
 }

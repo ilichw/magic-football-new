@@ -1,11 +1,11 @@
-export class PauseScene extends Phaser.Scene {
+export class FullscreenMessageScene extends Phaser.Scene {
   background!: Phaser.GameObjects.Rectangle;
   visible = false;
   titleText!: Phaser.GameObjects.Text;
   msgText!: Phaser.GameObjects.Text;
 
   constructor() {
-    super({ key: 'PauseScene' });
+    super({ key: 'FullscreenMessageScene' });
   }
 
   create() {
@@ -28,8 +28,6 @@ export class PauseScene extends Phaser.Scene {
     this.hide();
 
     // resume logic
-    // this.events.on('toggle', this.handleToggle, this);
-
     // сейчас сцена пазы отвечает за слушание события клавиатуры
     this.events.on('showMessage', this.showMessage, this);
   }

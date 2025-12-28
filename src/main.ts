@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { MainScene } from './scenes/MainScene.ts';
-import { PauseScene } from './scenes/PauseScene.ts';
+import { FullscreenMessageScene } from './scenes/FullscreenMessageScene.ts';
 import { GoalScene } from './scenes/GoalScene.ts';
 import { constants } from './config.ts';
-import { ScoreScene } from './scenes/ScoreScene.ts';
+import { UIScene } from './scenes/UIScene.ts';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -12,7 +12,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
   },
-  scene: [MainScene, PauseScene, GoalScene, ScoreScene],
+  scene: [MainScene, FullscreenMessageScene, GoalScene, UIScene],
 };
 
 window.onload = () => {

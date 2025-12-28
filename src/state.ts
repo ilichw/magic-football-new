@@ -14,7 +14,7 @@ class GameState {
   public attacks!: Phaser.GameObjects.Group;
 
   constructor() {
-    // костыль чтобы не было ошибки в ScoreScene
+    // костыль чтобы не было ошибки в UIScene
     this.field = new GameField(0, 0, 0, 0);
   }
 
