@@ -31,22 +31,16 @@ export class PauseScene extends Phaser.Scene {
     // this.events.on('toggle', this.handleToggle, this);
 
     // сейчас сцена пазы отвечает за слушание события клавиатуры
-    this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
+    this.events.on('showMessage', this.showMessage, this);
   }
 
-  handleKeyP(event: KeyboardEvent) {
-    event.preventDefault();
-
+  showMessage() {
     this.visible ? this.hide() : this.show();
     this.visible = !this.visible;
-
-    this.scene.get('MainScene').events.emit('togglePause');
-    // this.scene.stop();
-    // this.scene.resume('MainScene');
   }
 
   shutdown() {
-    this.input.keyboard!.off('keydown-P', this.handleKeyP, this);
+    this.events.off('showMessage', this.showMessage, this);
   }
 
   handleToggle() {

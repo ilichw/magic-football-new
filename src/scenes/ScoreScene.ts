@@ -16,6 +16,18 @@ export class ScoreScene extends Phaser.Scene {
     });
 
     this.events.on('updateScore', this.refresh, this);
+    this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
+  }
+
+  handleKeyP(event: KeyboardEvent) {
+    event.preventDefault();
+
+    this.scene.get('PauseScene').events.emit('showMessage');
+    this.scene.get('MainScene').events.emit('togglePause');
+  }
+
+  shutdown() {
+    this.input.keyboard!.off('keydown-P', this.handleKeyP, this);
   }
 
   createScoreText() {
