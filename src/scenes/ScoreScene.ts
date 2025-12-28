@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import gameState from '../state.ts';
+import { constants } from '../config.ts';
 
 export class ScoreScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
@@ -22,7 +23,10 @@ export class ScoreScene extends Phaser.Scene {
   handleKeyP(event: KeyboardEvent) {
     event.preventDefault();
 
-    this.scene.get('PauseScene').events.emit('showMessage');
+    this.scene
+      .get('PauseScene')
+      .events.emit('showMessage', constants.pauseMessage.title, constants.pauseMessage.message);
+
     this.scene.get('MainScene').events.emit('togglePause');
   }
 

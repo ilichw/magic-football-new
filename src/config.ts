@@ -16,6 +16,12 @@ export const constants = {
 
   // настройк атаки
   attackVelocity: 500, // px/sec
+
+  // сообщения
+  pauseMessage: {
+    title: 'Пауза',
+    message: 'Нажмите P для продолжения',
+  },
 };
 
 export const initials = {

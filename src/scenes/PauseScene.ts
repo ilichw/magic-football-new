@@ -1,8 +1,8 @@
 export class PauseScene extends Phaser.Scene {
   background!: Phaser.GameObjects.Rectangle;
   visible = false;
-  text1!: Phaser.GameObjects.Text;
-  text2!: Phaser.GameObjects.Text;
+  titleText!: Phaser.GameObjects.Text;
+  msgText!: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: 'PauseScene' });
@@ -17,12 +17,12 @@ export class PauseScene extends Phaser.Scene {
 
     // text
     const titleTextStyle = { fontSize: '32px', color: '#fff', align: 'center' };
-    this.text1 = this.add.text(w / 2, h / 2 - 30, 'Пауза', titleTextStyle);
-    this.text1.setOrigin(0.5);
+    this.titleText = this.add.text(w / 2, h / 2 - 30, '', titleTextStyle);
+    this.titleText.setOrigin(0.5);
 
     const msgTextStyle = { fontSize: '20px', color: '#fff', align: 'center' };
-    this.text2 = this.add.text(w / 2, h / 2 + 30, 'Нажмите P для продолжения', msgTextStyle);
-    this.text2.setOrigin(0.5);
+    this.msgText = this.add.text(w / 2, h / 2 + 30, '', msgTextStyle);
+    this.msgText.setOrigin(0.5);
 
     // спрятать элементы сцены
     this.hide();
@@ -34,9 +34,12 @@ export class PauseScene extends Phaser.Scene {
     this.events.on('showMessage', this.showMessage, this);
   }
 
-  showMessage() {
+  showMessage(titleText: string, msgText: string) {
     this.visible ? this.hide() : this.show();
     this.visible = !this.visible;
+
+    this.titleText.setText(titleText);
+    this.msgText.setText(msgText);
   }
 
   shutdown() {
@@ -50,13 +53,13 @@ export class PauseScene extends Phaser.Scene {
 
   show() {
     this.background.setVisible(true);
-    this.text1.setVisible(true);
-    this.text2.setVisible(true);
+    this.titleText.setVisible(true);
+    this.msgText.setVisible(true);
   }
 
   hide() {
     this.background.setVisible(false);
-    this.text1.setVisible(false);
-    this.text2.setVisible(false);
+    this.titleText.setVisible(false);
+    this.msgText.setVisible(false);
   }
 }
