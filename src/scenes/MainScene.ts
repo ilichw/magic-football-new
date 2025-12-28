@@ -65,10 +65,20 @@ export class MainScene extends Phaser.Scene {
     this.createGoalAreas();
     this.setColliders();
     this.scene.launch('ScoreScene'); // отображение счета
+    this.scene.launch('PauseScene');
 
     // --- СОБЫТИЯ ---
     // pause logic
-    this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
+    // this.input.keyboard!.on('keydown-P', this.handlePauseKeyPress, this);
+    // this.input.keyboard!.on('keydown-P', (event: KeyboardEvent) => {
+    // event.preventDefault();
+
+    // const isPaused = this.scene.isPaused('MainScene');
+    // isPaused ? this.scene.resume('MainScene') : this.scene.pause('MainScene');
+
+    // this.scene.get('PauseScene').events.emit('toggle');
+    // });
+    this.events.on('togglePause', this.togglePause, this);
 
     // логика создания атаки
     this.events.on('userShoots', this.handleUserShoot, this);
@@ -80,9 +90,15 @@ export class MainScene extends Phaser.Scene {
     this.events.on('goal', this.handleGoal, this);
   }
 
+  togglePause() {
+    const isPaused = this.scene.isPaused('MainScene');
+    isPaused ? this.scene.resume('MainScene') : this.scene.pause('MainScene');
+  }
+
   shutdown() {
     // отключение обработчиков событий
-    this.input.keyboard!.off('keydown-P', this.handlePauseKeyPress, this);
+    // this.input.keyboard!.off('keydown-P', this.handlePauseKeyPress, this);
+    this.events.on('togglePause', this.togglePause, this);
     this.events.off('userShoots', this.handleUserShoot, this);
     this.events.off('userHit', this.handleUserHit, this);
     this.events.off('goal', this.handleGoal, this);
@@ -262,9 +278,9 @@ export class MainScene extends Phaser.Scene {
     this.add.text(300, 570, 'Any Sponsor');
   }
 
-  handlePauseKeyPress(event: KeyboardEvent) {
-    event.preventDefault();
-    this.scene.pause();
-    this.scene.launch('PauseScene');
-  }
+  // handlePauseKeyPress(event: KeyboardEvent) {
+  //   event.preventDefault();
+  //   this.scene.pause();
+  //   this.scene.launch('PauseScene');
+  // }
 }
