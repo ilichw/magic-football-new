@@ -22,6 +22,10 @@ export const constants = {
     title: 'Пауза',
     message: 'Нажмите P для продолжения',
   },
+  goalMessage: {
+    title: 'Гол!!!',
+    message: 'Нажмите P для продолжения',
+  },
 };
 
 export const initials = {

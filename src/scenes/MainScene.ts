@@ -78,7 +78,13 @@ export class MainScene extends Phaser.Scene {
     this.events.on('userHit', this.handleUserHit, this);
 
     // логика забивания гола
-    this.events.on('goal', this.handleGoal, this);
+    this.events.on('kickOff', this.handleKickOff, this);
+  }
+
+  handleKickOff() {
+    gameState.refresh();
+    this.scene.get('FullscreenMessageScene').events.emit('hideMessage');
+    this.scene.resume('MainScene');
   }
 
   togglePause() {
@@ -88,10 +94,10 @@ export class MainScene extends Phaser.Scene {
 
   shutdown() {
     // отключение обработчиков событий
-    this.events.on('togglePause', this.togglePause, this);
+    this.events.off('togglePause', this.togglePause, this);
     this.events.off('userShoots', this.handleUserShoot, this);
     this.events.off('userHit', this.handleUserHit, this);
-    this.events.off('goal', this.handleGoal, this);
+    this.events.off('kickOff', this.handleKickOff, this);
   }
 
   update(time: number, delta: number) {
@@ -126,24 +132,26 @@ export class MainScene extends Phaser.Scene {
 
       // определение гола с задержкой для реалистичности
       if (goalArea.goal && time - goalArea.goalTriggerTime >= constants.goalTriggerCooldown) {
-        this.events.emit('goal', goalArea);
+        // this.events.emit('goal', goalArea);
+        // console.log(goalArea);
+        this.scene.get('UIScene').events.emit('goal', goalArea);
       }
     });
   }
 
-  handleGoal(goalArea: GoalArea) {
-    // увеличить счет забившей команды
-    goalArea.opposingTeam.increaseScore();
+  // handleGoal(goalArea: GoalArea) {
+  //   // увеличить счет забившей команды
+  //   goalArea.opposingTeam.increaseScore();
 
-    // остановить текущую (главную) сцену
-    this.scene.pause();
+  //   // остановить текущую (главную) сцену
+  //   this.scene.pause();
 
-    // обновить сцену отображения счета
-    this.scene.get('UIScene').events.emit('updateScore');
+  //   // обновить сцену отображения счета
+  //   this.scene.get('UIScene').events.emit('updateScore');
 
-    // запуск экрана "гооооооооооооол"
-    this.scene.launch('GoalScene');
-  }
+  //   // запуск экрана "гооооооооооооол"
+  //   this.scene.launch('GoalScene');
+  // }
 
   initMap(x: number, y: number) {
     const map = this.make.tilemap({

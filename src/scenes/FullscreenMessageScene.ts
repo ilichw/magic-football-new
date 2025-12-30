@@ -27,37 +27,28 @@ export class FullscreenMessageScene extends Phaser.Scene {
     // спрятать элементы сцены
     this.hide();
 
-    // resume logic
-    // сейчас сцена пазы отвечает за слушание события клавиатуры
     this.events.on('showMessage', this.showMessage, this);
-  }
-
-  showMessage(titleText: string, msgText: string) {
-    this.visible ? this.hide() : this.show();
-    this.visible = !this.visible;
-
-    this.titleText.setText(titleText);
-    this.msgText.setText(msgText);
+    this.events.on('hideMessage', this.hide, this);
   }
 
   shutdown() {
     this.events.off('showMessage', this.showMessage, this);
-  }
-
-  handleToggle() {
-    this.visible ? this.hide() : this.show();
-    this.visible = !this.visible;
-  }
-
-  show() {
-    this.background.setVisible(true);
-    this.titleText.setVisible(true);
-    this.msgText.setVisible(true);
+    this.events.off('hideMessage', this.hide, this);
   }
 
   hide() {
     this.background.setVisible(false);
     this.titleText.setVisible(false);
     this.msgText.setVisible(false);
+  }
+
+  showMessage(titleText: string, msgText: string) {
+    this.background.setVisible(true);
+    this.titleText.setVisible(true);
+    this.msgText.setVisible(true);
+
+    // set text
+    this.titleText.setText(titleText);
+    this.msgText.setText(msgText);
   }
 }
