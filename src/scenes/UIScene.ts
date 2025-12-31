@@ -38,11 +38,11 @@ export class UIScene extends Phaser.Scene {
 
     if (paused) {
       scene.events.emit('hideMessage');
+      this.scene.resume('MainScene');
     } else {
       scene.events.emit('showMessage', constants.pauseMessage.title, constants.pauseMessage.message);
+      this.scene.pause('MainScene');
     }
-
-    this.scene.get('MainScene').events.emit('togglePause');
   }
 
   handleGoal(goalArea: GoalArea) {

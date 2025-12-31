@@ -68,9 +68,6 @@ export class MainScene extends Phaser.Scene {
     this.scene.launch('BigMessageScene');
 
     // --- СОБЫТИЯ ---
-    // pause logic
-    this.events.on('togglePause', this.togglePause, this);
-
     // логика создания атаки
     this.events.on('userShoots', this.handleUserShoot, this);
 
@@ -83,7 +80,6 @@ export class MainScene extends Phaser.Scene {
 
   shutdown() {
     // отключение обработчиков событий
-    this.events.off('togglePause', this.togglePause, this);
     this.events.off('userShoots', this.handleUserShoot, this);
     this.events.off('userHit', this.handleUserHit, this);
     this.events.off('kickOff', this.handleKickOff, this);
@@ -253,10 +249,5 @@ export class MainScene extends Phaser.Scene {
     gameState.refresh();
     this.scene.get('BigMessageScene').events.emit('hideMessage');
     this.scene.resume('MainScene');
-  }
-
-  togglePause() {
-    const isPaused = this.scene.isPaused('MainScene');
-    isPaused ? this.scene.resume('MainScene') : this.scene.pause('MainScene');
   }
 }
