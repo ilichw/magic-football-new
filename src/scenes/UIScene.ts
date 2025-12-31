@@ -5,8 +5,7 @@ import type { GoalArea } from '../classes/GoalArea.ts';
 
 export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
-  goal = false;
-  // paused = false;
+  private goal = false;
 
   constructor() {
     super({ key: 'UIScene', active: true });
@@ -14,17 +13,15 @@ export class UIScene extends Phaser.Scene {
 
   create() {
     const newScoreText = this.createScoreText();
-    this.scoreText = this.add.text(200, 10, newScoreText, {
-      fontSize: '20px',
-      color: '#fff',
-    });
+    const scoreTextStyle = { fontSize: '20px', color: '#fff' };
+    this.scoreText = this.add.text(200, 10, newScoreText, scoreTextStyle);
 
     this.events.on('updateScore', this.refresh, this);
     this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
     this.events.on('goal', this.handleGoal, this);
   }
 
-  handleKeyP(event: KeyboardEvent): void {
+  private handleKeyP(event: KeyboardEvent): void {
     event.preventDefault();
 
     if (this.goal) {
@@ -45,11 +42,11 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
-  handleGoal(goalArea: GoalArea) {
+  private handleGoal(goalArea: GoalArea): void {
     // без этой строки событие срабатывает повторно
     if (this.goal) return;
 
-    // флаг заитого мяча
+    // флаг забитого мяча
     this.goal = true;
 
     // остановить главную сцену
@@ -71,7 +68,7 @@ export class UIScene extends Phaser.Scene {
     this.events.on('goal', this.handleGoal, this);
   }
 
-  createScoreText() {
+  private createScoreText() {
     if (gameState.teams[0] === undefined || gameState.teams[1] === undefined) {
       return '';
     }
@@ -84,7 +81,7 @@ export class UIScene extends Phaser.Scene {
     );
   }
 
-  refresh() {
+  private refresh() {
     const newScoreText = this.createScoreText();
     this.scoreText.setText(newScoreText);
   }
