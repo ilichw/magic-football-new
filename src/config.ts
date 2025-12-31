@@ -26,6 +26,10 @@ export const constants = {
     title: 'Гол!!!',
     message: 'Нажмите P для продолжения',
   },
+  gameOverMessage: {
+    title: 'Игра окончена!',
+    message: 'Нажмите P для продолжения',
+  },
 };
 
 export const initials = {

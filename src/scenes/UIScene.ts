@@ -6,6 +6,7 @@ import type { GoalArea } from '../classes/GoalArea.ts';
 export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private goal = false;
+  private gameOver = false;
 
   constructor() {
     super({ key: 'UIScene', active: true });
@@ -56,10 +57,15 @@ export class UIScene extends Phaser.Scene {
     goalArea.opposingTeam.increaseScore();
     this.events.emit('updateScore');
 
+    if (this.checkGameOver()) {
+      this.gameOver = true;
+    }
+
     // запуск экрана "гооооооооооооол"
-    this.scene
-      .get('BigMessageScene')
-      .events.emit('showMessage', constants.goalMessage.title, constants.goalMessage.message);
+    const bigMessageScene = this.scene.get('BigMessageScene');
+    const titleText = this.gameOver ? constants.gameOverMessage.title : constants.goalMessage.title;
+    const msgText = this.gameOver ? constants.gameOverMessage.message : constants.goalMessage.message;
+    bigMessageScene.events.emit('showMessage', titleText, msgText);
   }
 
   shutdown() {
@@ -84,5 +90,9 @@ export class UIScene extends Phaser.Scene {
   private refresh() {
     const newScoreText = this.createScoreText();
     this.scoreText.setText(newScoreText);
+  }
+
+  checkGameOver(): boolean {
+    return gameState.teams.some((team) => team.score >= 5);
   }
 }

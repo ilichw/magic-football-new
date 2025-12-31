@@ -86,6 +86,7 @@ export class MainScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number) {
+    // this.checkGameOver()
     // check goal logic
     this.detectGoal(time);
 
@@ -102,6 +103,10 @@ export class MainScene extends Phaser.Scene {
       attack.update(time, delta);
       return null;
     });
+  }
+
+  checkGameOver(): boolean {
+    return gameState.teams.some((team) => team.score >= 5);
   }
 
   detectGoal(time: number) {
