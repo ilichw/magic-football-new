@@ -66,7 +66,9 @@ export class UIScene extends Phaser.Scene {
   }
 
   shutdown() {
-    this.input.keyboard!.off('keydown-P', this.handleKeyP, this);
+    this.events.on('updateScore', this.refresh, this);
+    this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
+    this.events.on('goal', this.handleGoal, this);
   }
 
   createScoreText() {

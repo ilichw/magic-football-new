@@ -81,17 +81,6 @@ export class MainScene extends Phaser.Scene {
     this.events.on('kickOff', this.handleKickOff, this);
   }
 
-  handleKickOff() {
-    gameState.refresh();
-    this.scene.get('BigMessageScene').events.emit('hideMessage');
-    this.scene.resume('MainScene');
-  }
-
-  togglePause() {
-    const isPaused = this.scene.isPaused('MainScene');
-    isPaused ? this.scene.resume('MainScene') : this.scene.pause('MainScene');
-  }
-
   shutdown() {
     // отключение обработчиков событий
     this.events.off('togglePause', this.togglePause, this);
@@ -132,26 +121,10 @@ export class MainScene extends Phaser.Scene {
 
       // определение гола с задержкой для реалистичности
       if (goalArea.goal && time - goalArea.goalTriggerTime >= constants.goalTriggerCooldown) {
-        // this.events.emit('goal', goalArea);
-        // console.log(goalArea);
         this.scene.get('UIScene').events.emit('goal', goalArea);
       }
     });
   }
-
-  // handleGoal(goalArea: GoalArea) {
-  //   // увеличить счет забившей команды
-  //   goalArea.opposingTeam.increaseScore();
-
-  //   // остановить текущую (главную) сцену
-  //   this.scene.pause();
-
-  //   // обновить сцену отображения счета
-  //   this.scene.get('UIScene').events.emit('updateScore');
-
-  //   // запуск экрана "гооооооооооооол"
-  //   this.scene.launch('GoalScene');
-  // }
 
   initMap(x: number, y: number) {
     const map = this.make.tilemap({
@@ -276,9 +249,14 @@ export class MainScene extends Phaser.Scene {
     this.add.text(300, 570, 'Any Sponsor');
   }
 
-  // handlePauseKeyPress(event: KeyboardEvent) {
-  //   event.preventDefault();
-  //   this.scene.pause();
-  //   this.scene.launch('BigMessageScene');
-  // }
+  handleKickOff() {
+    gameState.refresh();
+    this.scene.get('BigMessageScene').events.emit('hideMessage');
+    this.scene.resume('MainScene');
+  }
+
+  togglePause() {
+    const isPaused = this.scene.isPaused('MainScene');
+    isPaused ? this.scene.resume('MainScene') : this.scene.pause('MainScene');
+  }
 }
