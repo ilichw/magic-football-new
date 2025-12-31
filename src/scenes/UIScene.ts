@@ -33,7 +33,7 @@ export class UIScene extends Phaser.Scene {
       return;
     }
 
-    const scene = this.scene.get('FullscreenMessageScene');
+    const scene = this.scene.get('BigMessageScene');
     const paused = this.scene.isPaused('MainScene');
 
     if (paused) {
@@ -61,7 +61,7 @@ export class UIScene extends Phaser.Scene {
 
     // запуск экрана "гооооооооооооол"
     this.scene
-      .get('FullscreenMessageScene')
+      .get('BigMessageScene')
       .events.emit('showMessage', constants.goalMessage.title, constants.goalMessage.message);
   }
 

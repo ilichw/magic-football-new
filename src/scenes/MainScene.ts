@@ -65,7 +65,7 @@ export class MainScene extends Phaser.Scene {
     this.createGoalAreas();
     this.setColliders();
     this.scene.launch('UIScene'); // отображение счета
-    this.scene.launch('FullscreenMessageScene');
+    this.scene.launch('BigMessageScene');
 
     // --- СОБЫТИЯ ---
     // pause logic
@@ -83,7 +83,7 @@ export class MainScene extends Phaser.Scene {
 
   handleKickOff() {
     gameState.refresh();
-    this.scene.get('FullscreenMessageScene').events.emit('hideMessage');
+    this.scene.get('BigMessageScene').events.emit('hideMessage');
     this.scene.resume('MainScene');
   }
 
@@ -279,6 +279,6 @@ export class MainScene extends Phaser.Scene {
   // handlePauseKeyPress(event: KeyboardEvent) {
   //   event.preventDefault();
   //   this.scene.pause();
-  //   this.scene.launch('FullscreenMessageScene');
+  //   this.scene.launch('BigMessageScene');
   // }
 }

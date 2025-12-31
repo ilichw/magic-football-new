@@ -1,11 +1,11 @@
-export class FullscreenMessageScene extends Phaser.Scene {
+export class BigMessageScene extends Phaser.Scene {
   background!: Phaser.GameObjects.Rectangle;
   visible = false;
   titleText!: Phaser.GameObjects.Text;
   msgText!: Phaser.GameObjects.Text;
 
   constructor() {
-    super({ key: 'FullscreenMessageScene' });
+    super({ key: 'BigMessageScene' });
   }
 
   create() {
