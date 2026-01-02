@@ -5,8 +5,11 @@ import type { GoalArea } from '../classes/GoalArea.ts';
 
 export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
+  private timeText!: Phaser.GameObjects.Text;
+
   private goal = false;
   private gameOver = false;
+  private timeSec = 0;
 
   constructor() {
     super({ key: 'UIScene', active: true });
@@ -17,9 +20,32 @@ export class UIScene extends Phaser.Scene {
     const scoreTextStyle = { fontSize: '20px', color: '#fff' };
     this.scoreText = this.add.text(200, 10, newScoreText, scoreTextStyle);
 
+    const newTimeText = this.createTimeText(0, 0);
+    this.timeText = this.add.text(600, 10, newTimeText, scoreTextStyle);
+
     this.events.on('updateScore', this.refresh, this);
     this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
     this.events.on('goal', this.handleGoal, this);
+  }
+
+  update(time: number, delta: number): void {
+    const newTime = Math.floor(time / 1000);
+
+    if (newTime !== this.timeSec) {
+      this.timeSec = newTime;
+      this.refreshTime(this.timeSec);
+    }
+  }
+
+  private refreshTime(time: number): void {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    this.timeText.setText(this.createTimeText(minutes, seconds));
+  }
+
+  private createTimeText(minutes: number, seconds: number): string {
+    const f = (arg: number) => (arg > 9 ? `${arg}` : `0${arg}`);
+    return f(minutes) + ':' + f(seconds);
   }
 
   private handleKeyP(event: KeyboardEvent): void {
