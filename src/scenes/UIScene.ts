@@ -10,6 +10,7 @@ export class UIScene extends Phaser.Scene {
   private goal = false;
   private gameOver = false;
   private paused = false;
+  private help = false;
 
   private gameTime = 0;
   private timeLeft = constants.gameTime;
@@ -29,6 +30,27 @@ export class UIScene extends Phaser.Scene {
     this.events.on('updateScore', this.refresh, this);
     this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
     this.events.on('goal', this.handleGoal, this);
+    this.input.keyboard!.on('keydown-F1', this.handleKeyF1, this);
+  }
+
+  private handleKeyF1(event: KeyboardEvent): void {
+    event.preventDefault();
+
+    const scene = this.scene.get('BigMessageScene');
+
+    if (this.help) {
+      this.help = false;
+      scene.events.emit('hideMessage');
+      this.scene.resume('MainScene');
+      return;
+    }
+
+    this.scene.pause('MainScene');
+    this.help = true;
+    const titleText = constants.helpMessage.title;
+    const msgText = constants.helpMessage.message;
+
+    scene.events.emit('showMessage', titleText, msgText);
   }
 
   update(time: number, delta: number): void {
@@ -36,7 +58,7 @@ export class UIScene extends Phaser.Scene {
 
     if (newTime !== this.gameTime) {
       this.gameTime = newTime;
-      if (!this.goal && !this.paused) this.timeLeft--;
+      if (!this.goal && !this.paused && !this.help) this.timeLeft--;
       this.refreshTime(this.timeLeft);
     }
 
@@ -90,7 +112,6 @@ export class UIScene extends Phaser.Scene {
     }
 
     const scene = this.scene.get('BigMessageScene');
-    // const paused = this.scene.isPaused('MainScene');
 
     if (this.paused) {
       scene.events.emit('hideMessage');
@@ -128,6 +149,7 @@ export class UIScene extends Phaser.Scene {
     this.events.on('updateScore', this.refresh, this);
     this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
     this.events.on('goal', this.handleGoal, this);
+    this.input.keyboard!.off('keydown-F1', this.handleKeyF1, this);
   }
 
   private createScoreText() {
