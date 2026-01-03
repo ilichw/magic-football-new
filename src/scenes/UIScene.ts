@@ -9,7 +9,9 @@ export class UIScene extends Phaser.Scene {
 
   private goal = false;
   private gameOver = false;
-  private timeSec = 0;
+  private playTime = 0;
+  private pendingTime = 0;
+  private paused = false;
 
   constructor() {
     super({ key: 'UIScene', active: true });
@@ -31,9 +33,11 @@ export class UIScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     const newTime = Math.floor(time / 1000);
 
-    if (newTime !== this.timeSec) {
-      this.timeSec = newTime;
-      this.refreshTime(this.timeSec);
+    if (newTime !== this.playTime) {
+      this.playTime = newTime;
+      if (this.goal || this.paused) this.pendingTime++;
+      const cleanTime = this.playTime - this.pendingTime;
+      this.refreshTime(cleanTime);
     }
   }
 
@@ -54,6 +58,7 @@ export class UIScene extends Phaser.Scene {
     if (this.goal) {
       this.scene.get('MainScene').events.emit('kickOff'); // kick-off типа возобн игру после гола по англ
       this.goal = false;
+      this.paused = false;
       return;
     }
 
@@ -63,9 +68,11 @@ export class UIScene extends Phaser.Scene {
     if (paused) {
       scene.events.emit('hideMessage');
       this.scene.resume('MainScene');
+      this.paused = false;
     } else {
       scene.events.emit('showMessage', constants.pauseMessage.title, constants.pauseMessage.message);
       this.scene.pause('MainScene');
+      this.paused = true;
     }
   }
 

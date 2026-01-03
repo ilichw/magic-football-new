@@ -105,9 +105,9 @@ export class MainScene extends Phaser.Scene {
     });
   }
 
-  checkGameOver(): boolean {
-    return gameState.teams.some((team) => team.score >= 5);
-  }
+  // checkGameOver(): boolean {
+  //   return gameState.teams.some((team) => team.score >= 5);
+  // }
 
   detectGoal(time: number) {
     gameState.goalAreas.forEach((goalArea) => {
