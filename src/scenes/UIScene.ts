@@ -37,9 +37,7 @@ export class UIScene extends Phaser.Scene {
 
     if (newTime !== this.gameTime) {
       this.gameTime = newTime;
-      if (!this.goal && !this.paused) this.timeLeft--; // this.playTime++;
-      // const cleanTime = this.gameTime - this.playTime;
-      // console.log(300 - cleanTime);
+      if (!this.goal && !this.paused) this.timeLeft--;
       this.refreshTime(this.timeLeft);
     }
   }
