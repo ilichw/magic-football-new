@@ -12,7 +12,6 @@ export class UIScene extends Phaser.Scene {
   private paused = false;
 
   private gameTime = 0;
-  // private playTime = 0;
   private timeLeft = constants.gameTime;
 
   constructor() {
@@ -40,6 +39,33 @@ export class UIScene extends Phaser.Scene {
       if (!this.goal && !this.paused) this.timeLeft--;
       this.refreshTime(this.timeLeft);
     }
+
+    if (this.checkGameOver()) {
+      this.gameOver = true;
+    }
+
+    if (this.gameOver) {
+      this.scene.pause();
+      this.scene.pause('MainScene');
+      this.showGameOverMessage();
+    }
+  }
+
+  private showGameOverMessage(): void {
+    const winnerTeam = gameState.getWinner();
+
+    let titleText = constants.gameOverMessage.title;
+    let msgText = constants.gameOverMessage.message;
+
+    if (winnerTeam === 'draw') {
+      titleText = constants.drawMessage.title;
+      msgText = constants.drawMessage.message;
+    }
+
+    msgText = msgText.replace('{WINNER_TEAM}', winnerTeam);
+
+    const scene = this.scene.get('BigMessageScene');
+    scene.events.emit('showMessage', titleText, msgText);
   }
 
   private refreshTime(time: number): void {
@@ -64,9 +90,9 @@ export class UIScene extends Phaser.Scene {
     }
 
     const scene = this.scene.get('BigMessageScene');
-    const paused = this.scene.isPaused('MainScene');
+    // const paused = this.scene.isPaused('MainScene');
 
-    if (paused) {
+    if (this.paused) {
       scene.events.emit('hideMessage');
       this.scene.resume('MainScene');
       this.paused = false;
@@ -90,10 +116,6 @@ export class UIScene extends Phaser.Scene {
     // увеличить счет забившей команды
     goalArea.opposingTeam.increaseScore();
     this.events.emit('updateScore');
-
-    if (this.checkGameOver()) {
-      this.gameOver = true;
-    }
 
     // запуск экрана "гооооооооооооол"
     const bigMessageScene = this.scene.get('BigMessageScene');
@@ -127,7 +149,6 @@ export class UIScene extends Phaser.Scene {
   }
 
   checkGameOver(): boolean {
-    // return gameState.teams.some((team) => team.score >= 5);
     return this.timeLeft <= 0;
   }
 }

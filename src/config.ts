@@ -28,11 +28,15 @@ export const constants = {
   },
   gameOverMessage: {
     title: 'Игра окончена!',
-    message: 'Нажмите P для продолжения',
+    message: 'Победила команда {WINNER_TEAM}\nНажмите P для продолжения',
+  },
+  drawMessage: {
+    title: 'Игра окончена!',
+    message: 'Ничья\nНажмите P для продолжения',
   },
 
   // время игры
-  gameTime: 300, // сек
+  gameTime: 10, // сек
 };
 
 export const initials = {

@@ -55,6 +55,15 @@ class GameState {
   destroyAttack(attack: Attack) {
     attack.destroy();
   }
+
+  // возвращает имя победившей команды либо draw (ничья)
+  getWinner(): string {
+    const team1Score = this.teams[0].score;
+    const team2Score = this.teams[1].score;
+    if (team1Score === team2Score) return 'draw';
+
+    return team1Score > team2Score ? this.teams[0].name : this.teams[1].name;
+  }
 }
 
 const gameState = new GameState();
