@@ -30,6 +30,9 @@ export const constants = {
     title: 'Игра окончена!',
     message: 'Нажмите P для продолжения',
   },
+
+  // время игры
+  gameTime: 300, // сек
 };
 
 export const initials = {

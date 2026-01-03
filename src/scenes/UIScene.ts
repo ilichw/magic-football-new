@@ -9,9 +9,11 @@ export class UIScene extends Phaser.Scene {
 
   private goal = false;
   private gameOver = false;
-  private playTime = 0;
-  private pendingTime = 0;
   private paused = false;
+
+  private gameTime = 0;
+  // private playTime = 0;
+  private timeLeft = constants.gameTime;
 
   constructor() {
     super({ key: 'UIScene', active: true });
@@ -33,11 +35,12 @@ export class UIScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     const newTime = Math.floor(time / 1000);
 
-    if (newTime !== this.playTime) {
-      this.playTime = newTime;
-      if (this.goal || this.paused) this.pendingTime++;
-      const cleanTime = this.playTime - this.pendingTime;
-      this.refreshTime(cleanTime);
+    if (newTime !== this.gameTime) {
+      this.gameTime = newTime;
+      if (!this.goal && !this.paused) this.timeLeft--; // this.playTime++;
+      // const cleanTime = this.gameTime - this.playTime;
+      // console.log(300 - cleanTime);
+      this.refreshTime(this.timeLeft);
     }
   }
 
@@ -126,6 +129,7 @@ export class UIScene extends Phaser.Scene {
   }
 
   checkGameOver(): boolean {
-    return gameState.teams.some((team) => team.score >= 5);
+    // return gameState.teams.some((team) => team.score >= 5);
+    return this.timeLeft <= 0;
   }
 }
