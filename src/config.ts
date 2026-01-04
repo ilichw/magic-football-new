@@ -17,6 +17,9 @@ export const constants = {
   // настройк атаки
   attackVelocity: 500, // px/sec
 
+  // элементы интерфейса
+  helpTipText: 'F1 - помощь',
+
   // сообщения
   pauseMessage: {
     title: 'Пауза',
@@ -39,8 +42,8 @@ export const constants = {
     message: 'W, A, S, D - перемещение игрока\nПРОБЕЛ - выстрел атакой замедления\nP - пауза',
   },
 
-  // время игры
-  gameTime: 10, // сек
+  // время игры, сек
+  gameTime: 300, // 5 мин
 };
 
 export const initials = {

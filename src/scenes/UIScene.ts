@@ -6,6 +6,7 @@ import type { GoalArea } from '../classes/GoalArea.ts';
 export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private timeText!: Phaser.GameObjects.Text;
+  private helpTipText!: Phaser.GameObjects.Text;
 
   private goal = false;
   private gameOver = false;
@@ -20,6 +21,7 @@ export class UIScene extends Phaser.Scene {
   }
 
   create() {
+    // создание элементов сцены
     const newScoreText = this.createScoreText();
     const scoreTextStyle = { fontSize: '20px', color: '#fff' };
     this.scoreText = this.add.text(200, 10, newScoreText, scoreTextStyle);
@@ -27,30 +29,55 @@ export class UIScene extends Phaser.Scene {
     const newTimeText = this.createTimeText(0, 0);
     this.timeText = this.add.text(600, 10, newTimeText, scoreTextStyle);
 
+    this.helpTipText = this.add.text(600, 570, constants.helpTipText, scoreTextStyle);
+
+    // обработчики событий
     this.events.on('updateScore', this.refresh, this);
     this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
     this.events.on('goal', this.handleGoal, this);
     this.input.keyboard!.on('keydown-F1', this.handleKeyF1, this);
   }
+  private showMessage(titleText: string, msgText: string): void {
+    const bigMessageScene = this.scene.get('BigMessageScene');
+    bigMessageScene.events.emit('showMessage', titleText, msgText);
+  }
 
   private handleKeyF1(event: KeyboardEvent): void {
     event.preventDefault();
 
-    const scene = this.scene.get('BigMessageScene');
+    // const bigMessageScene = this.scene.get('BigMessageScene');
 
     if (this.help) {
       this.help = false;
-      scene.events.emit('hideMessage');
+
+      if (this.paused) {
+        this.showMessage(constants.pauseMessage.title, constants.pauseMessage.message);
+        // const titleText = constants.pauseMessage.title;
+        // const msgText = constants.pauseMessage.message;
+        // bigMessageScene.events.emit('showMessage', titleText, msgText);
+        return;
+      }
+
+      if (this.goal) {
+        this.showMessage(constants.goalMessage.title, constants.goalMessage.message);
+        // const titleText = constants.goalMessage.title;
+        // const msgText = constants.goalMessage.message;
+        // bigMessageScene.events.emit('showMessage', titleText, msgText);
+        return;
+      }
+
+      this.scene.get('BigMessageScene').events.emit('hideMessage');
       this.scene.resume('MainScene');
       return;
     }
 
-    this.scene.pause('MainScene');
+    if (this.scene.isActive('MainScene')) this.scene.pause('MainScene');
     this.help = true;
-    const titleText = constants.helpMessage.title;
-    const msgText = constants.helpMessage.message;
 
-    scene.events.emit('showMessage', titleText, msgText);
+    this.showMessage(constants.helpMessage.title, constants.helpMessage.message);
+    // const titleText = constants.helpMessage.title;
+    // const msgText = constants.helpMessage.message;
+    // bigMessageScene.events.emit('showMessage', titleText, msgText);
   }
 
   update(time: number, delta: number): void {
@@ -86,8 +113,8 @@ export class UIScene extends Phaser.Scene {
 
     msgText = msgText.replace('{WINNER_TEAM}', winnerTeam);
 
-    const scene = this.scene.get('BigMessageScene');
-    scene.events.emit('showMessage', titleText, msgText);
+    // const scene = this.scene.get('BigMessageScene');
+    this.showMessage(titleText, msgText);
   }
 
   private refreshTime(time: number): void {
@@ -139,10 +166,11 @@ export class UIScene extends Phaser.Scene {
     this.events.emit('updateScore');
 
     // запуск экрана "гооооооооооооол"
-    const bigMessageScene = this.scene.get('BigMessageScene');
+    // const bigMessageScene = this.scene.get('BigMessageScene');
     const titleText = this.gameOver ? constants.gameOverMessage.title : constants.goalMessage.title;
     const msgText = this.gameOver ? constants.gameOverMessage.message : constants.goalMessage.message;
-    bigMessageScene.events.emit('showMessage', titleText, msgText);
+    // bigMessageScene.events.emit('showMessage', titleText, msgText);
+    this.showMessage(titleText, msgText);
   }
 
   shutdown() {
