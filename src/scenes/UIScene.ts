@@ -45,24 +45,16 @@ export class UIScene extends Phaser.Scene {
   private handleKeyF1(event: KeyboardEvent): void {
     event.preventDefault();
 
-    // const bigMessageScene = this.scene.get('BigMessageScene');
-
     if (this.help) {
       this.help = false;
 
       if (this.paused) {
         this.showMessage(constants.pauseMessage.title, constants.pauseMessage.message);
-        // const titleText = constants.pauseMessage.title;
-        // const msgText = constants.pauseMessage.message;
-        // bigMessageScene.events.emit('showMessage', titleText, msgText);
         return;
       }
 
       if (this.goal) {
         this.showMessage(constants.goalMessage.title, constants.goalMessage.message);
-        // const titleText = constants.goalMessage.title;
-        // const msgText = constants.goalMessage.message;
-        // bigMessageScene.events.emit('showMessage', titleText, msgText);
         return;
       }
 
@@ -75,9 +67,6 @@ export class UIScene extends Phaser.Scene {
     this.help = true;
 
     this.showMessage(constants.helpMessage.title, constants.helpMessage.message);
-    // const titleText = constants.helpMessage.title;
-    // const msgText = constants.helpMessage.message;
-    // bigMessageScene.events.emit('showMessage', titleText, msgText);
   }
 
   update(time: number, delta: number): void {
@@ -112,8 +101,6 @@ export class UIScene extends Phaser.Scene {
     }
 
     msgText = msgText.replace('{WINNER_TEAM}', winnerTeam);
-
-    // const scene = this.scene.get('BigMessageScene');
     this.showMessage(titleText, msgText);
   }
 
@@ -166,10 +153,8 @@ export class UIScene extends Phaser.Scene {
     this.events.emit('updateScore');
 
     // запуск экрана "гооооооооооооол"
-    // const bigMessageScene = this.scene.get('BigMessageScene');
     const titleText = this.gameOver ? constants.gameOverMessage.title : constants.goalMessage.title;
     const msgText = this.gameOver ? constants.gameOverMessage.message : constants.goalMessage.message;
-    // bigMessageScene.events.emit('showMessage', titleText, msgText);
     this.showMessage(titleText, msgText);
   }
 

@@ -246,6 +246,7 @@ export class MainScene extends Phaser.Scene {
     this.add.text(300, 570, 'Any Sponsor');
   }
 
+  // возобновление после гола
   handleKickOff() {
     gameState.refresh();
     this.scene.get('BigMessageScene').events.emit('hideMessage');
