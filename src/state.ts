@@ -18,7 +18,6 @@ class GameState {
     this.field = new GameField(0, 0, 0, 0);
   }
 
-  // оказывается я ее не использую
   init() {
     this.goalAreas = [];
     this.teams = [];

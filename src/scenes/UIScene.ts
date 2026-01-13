@@ -3,11 +3,21 @@ import gameState from '../state.ts';
 import { constants } from '../config.ts';
 import type { GoalArea } from '../classes/GoalArea.ts';
 
+enum GameStatus {
+  GOAL,
+  GAME_OVER,
+  PAUSED,
+  HELP,
+  RUNNING,
+}
+
 export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private timeText!: Phaser.GameObjects.Text;
   private helpTipText!: Phaser.GameObjects.Text;
 
+  // private gameStatus = GameStatus.GAME_OVER;
+  // private running = false
   private goal = false;
   private gameOver = false;
   private paused = false;
@@ -36,7 +46,12 @@ export class UIScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown-P', this.handleKeyP, this);
     this.events.on('goal', this.handleGoal, this);
     this.input.keyboard!.on('keydown-F1', this.handleKeyF1, this);
+
+    // как только все готово игра считается запущенной
+    // this.gameStatus = GameStatus.RUNNING
+    // this.running = true
   }
+
   private showMessage(titleText: string, msgText: string): void {
     const bigMessageScene = this.scene.get('BigMessageScene');
     bigMessageScene.events.emit('showMessage', titleText, msgText);
@@ -74,7 +89,7 @@ export class UIScene extends Phaser.Scene {
 
     if (newTime !== this.gameTime) {
       this.gameTime = newTime;
-      if (!this.goal && !this.paused && !this.help) this.timeLeft--;
+      if (!this.goal && !this.paused && !this.help && !this.gameOver) this.timeLeft--;
       this.refreshTime(this.timeLeft);
     }
 
@@ -83,7 +98,6 @@ export class UIScene extends Phaser.Scene {
     }
 
     if (this.gameOver) {
-      this.scene.pause();
       this.scene.pause('MainScene');
       this.showGameOverMessage();
     }
@@ -115,8 +129,24 @@ export class UIScene extends Phaser.Scene {
     return f(minutes) + ':' + f(seconds);
   }
 
+  // действия при возобновлении игры
+  restartGame(): void {
+    // сброс игрового времени
+    this.gameTime = 0;
+    this.timeLeft = constants.gameTime;
+  }
+
   private handleKeyP(event: KeyboardEvent): void {
     event.preventDefault();
+
+    if (this.gameOver) {
+      this.scene.get('BigMessageScene').events.emit('hideMessage');
+      this.restartGame();
+      this.gameOver = false;
+      this.scene.stop('MainScene');
+      this.scene.start('MainScene');
+      return;
+    }
 
     if (this.goal) {
       this.scene.get('MainScene').events.emit('kickOff'); // kick-off типа возобн игру после гола по англ

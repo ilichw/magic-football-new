@@ -41,6 +41,8 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
+    gameState.init();
+
     const attacks = this.physics.add.group();
     gameState.attacks = attacks;
 
